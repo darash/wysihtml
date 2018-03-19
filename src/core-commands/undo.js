@@ -1,4 +1,4 @@
-(function(wysihtml){
+(function(wysihtml) {
   wysihtml.commands.undo = {
     exec: function(composer) {
       return composer.undoManager.undo();
@@ -8,4 +8,4 @@
       return false;
     }
   };
-}(wysihtml));
+})(wysihtml);

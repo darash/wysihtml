@@ -1,13 +1,13 @@
 /**
-   * Check whether the given node is a proper loaded image
-   * FIXME: Returns undefined when unknown (Chrome, Safari)
-*/
+ * Check whether the given node is a proper loaded image
+ * FIXME: Returns undefined when unknown (Chrome, Safari)
+ */
 
-wysihtml.dom.isLoadedImage = function (node) {
+wysihtml.dom.isLoadedImage = function(node) {
   try {
-    return node.complete && !node.mozMatchesSelector(":-moz-broken");
-  } catch(e) {
-    if (node.complete && node.readyState === "complete") {
+    return node.complete && !node.mozMatchesSelector(':-moz-broken');
+  } catch (e) {
+    if (node.complete && node.readyState === 'complete') {
       return true;
     }
   }

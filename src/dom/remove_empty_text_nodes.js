@@ -7,13 +7,16 @@
  */
 wysihtml.dom.removeEmptyTextNodes = function(node) {
   var childNode,
-      childNodes        = wysihtml.lang.array(node.childNodes).get(),
-      childNodesLength  = childNodes.length,
-      i                 = 0;
+    childNodes = wysihtml.lang.array(node.childNodes).get(),
+    childNodesLength = childNodes.length,
+    i = 0;
 
-  for (; i<childNodesLength; i++) {
+  for (; i < childNodesLength; i++) {
     childNode = childNodes[i];
-    if (childNode.nodeType === wysihtml.TEXT_NODE && (/^[\n\r]*$/).test(childNode.data)) {
+    if (
+      childNode.nodeType === wysihtml.TEXT_NODE &&
+      /^[\n\r]*$/.test(childNode.data)
+    ) {
       childNode.parentNode.removeChild(childNode);
     }
   }

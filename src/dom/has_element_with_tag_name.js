@@ -9,16 +9,19 @@
  *    wysihtml.dom.hasElementWithTagName(document, "IMG");
  */
 wysihtml.dom.hasElementWithTagName = (function() {
-  var LIVE_CACHE          = {},
-      DOCUMENT_IDENTIFIER = 1;
+  var LIVE_CACHE = {},
+    DOCUMENT_IDENTIFIER = 1;
 
   function _getDocumentIdentifier(doc) {
-    return doc._wysihtml_identifier || (doc._wysihtml_identifier = DOCUMENT_IDENTIFIER++);
+    return (
+      doc._wysihtml_identifier ||
+      (doc._wysihtml_identifier = DOCUMENT_IDENTIFIER++)
+    );
   }
 
   return function(doc, tagName) {
-    var key         = _getDocumentIdentifier(doc) + ":" + tagName,
-        cacheEntry  = LIVE_CACHE[key];
+    var key = _getDocumentIdentifier(doc) + ':' + tagName,
+      cacheEntry = LIVE_CACHE[key];
     if (!cacheEntry) {
       cacheEntry = LIVE_CACHE[key] = doc.getElementsByTagName(tagName);
     }

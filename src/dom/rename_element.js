@@ -25,12 +25,15 @@
  */
 wysihtml.dom.renameElement = function(element, newNodeName) {
   var newElement = element.ownerDocument.createElement(newNodeName),
-      firstChild;
-  while (firstChild = element.firstChild) {
+    firstChild;
+  while ((firstChild = element.firstChild)) {
     newElement.appendChild(firstChild);
   }
-  wysihtml.dom.copyAttributes(["align", "className"]).from(element).to(newElement);
-  
+  wysihtml.dom
+    .copyAttributes(['align', 'className'])
+    .from(element)
+    .to(newElement);
+
   if (element.parentNode) {
     element.parentNode.replaceChild(newElement, element);
   }

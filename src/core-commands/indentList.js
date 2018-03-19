@@ -1,4 +1,4 @@
-(function(wysihtml){
+(function(wysihtml) {
   wysihtml.commands.indentList = {
     exec: function(composer, command, value) {
       var listEls = composer.selection.getSelectionParentsByTag('LI');
@@ -9,21 +9,26 @@
     },
 
     state: function(composer, command) {
-        return false;
+      return false;
     },
 
     tryToPushLiLevel: function(liNodes, selection) {
-      var listTag, list, prevLi, liNode, prevLiList,
-          found = false;
+      var listTag,
+        list,
+        prevLi,
+        liNode,
+        prevLiList,
+        found = false;
 
       selection.executeAndRestoreRangy(function() {
-
-        for (var i = liNodes.length; i--;) {
+        for (var i = liNodes.length; i--; ) {
           liNode = liNodes[i];
-          listTag = (liNode.parentNode.nodeName === 'OL') ? 'OL' : 'UL';
+          listTag = liNode.parentNode.nodeName === 'OL' ? 'OL' : 'UL';
           list = liNode.ownerDocument.createElement(listTag);
-          prevLi = wysihtml.dom.domNode(liNode).prev({nodeTypes: [wysihtml.ELEMENT_NODE]});
-          prevLiList = (prevLi) ? prevLi.querySelector('ul, ol') : null;
+          prevLi = wysihtml.dom
+            .domNode(liNode)
+            .prev({ nodeTypes: [wysihtml.ELEMENT_NODE] });
+          prevLiList = prevLi ? prevLi.querySelector('ul, ol') : null;
 
           if (prevLi) {
             if (prevLiList) {
@@ -35,9 +40,8 @@
             found = true;
           }
         }
-
       });
       return found;
     }
   };
-}(wysihtml));
+})(wysihtml);

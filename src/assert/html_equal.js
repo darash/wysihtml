@@ -13,7 +13,7 @@ wysihtml.assert = wysihtml.assert || {};
  *    );
  */
 wysihtml.assert.htmlEqual = (function() {
-  var htmlHost = document.createElement("div");
+  var htmlHost = document.createElement('div');
 
   /**
    * IE uppercases tags and attribute names
@@ -26,12 +26,12 @@ wysihtml.assert.htmlEqual = (function() {
   })();
 
   var DOESNT_PRESERVE_WHITE_SPACE = (function() {
-    var div  = document.createElement("div"),
-        a    = document.createElement("a"),
-        p    = document.createElement("p");
+    var div = document.createElement('div'),
+      a = document.createElement('a'),
+      p = document.createElement('p');
     a.appendChild(p);
     div.appendChild(a);
-    return div.innerHTML.toLowerCase() != "<a><p></p></a>";
+    return div.innerHTML.toLowerCase() != '<a><p></p></a>';
   })();
 
   /**
@@ -43,15 +43,18 @@ wysihtml.assert.htmlEqual = (function() {
   var tokenizeHTML = (function() {
     var REG_EXP = /\s+|\>|</;
     return function(html) {
-      return html.split(REG_EXP).sort().join(" ");
+      return html
+        .split(REG_EXP)
+        .sort()
+        .join(' ');
     };
   })();
 
   var normalizeWhiteSpace = (function() {
-    var PRE_REG_EXP         = /(<pre[\^>]*>)([\S\s]*?)(<\/pre>)/mgi,
-        WHITE_SPACE_REG_EXP = /\s+/gm,
-        PLACEHOLDER         = "___PRE_CONTENT___",
-        PLACEHOLDER_REG_EXP = new RegExp(PLACEHOLDER, "g");
+    var PRE_REG_EXP = /(<pre[\^>]*>)([\S\s]*?)(<\/pre>)/gim,
+      WHITE_SPACE_REG_EXP = /\s+/gm,
+      PLACEHOLDER = '___PRE_CONTENT___',
+      PLACEHOLDER_REG_EXP = new RegExp(PLACEHOLDER, 'g');
     return function(html) {
       var preContents = [];
       // Extract content of elements that preserve white space first
@@ -61,7 +64,7 @@ wysihtml.assert.htmlEqual = (function() {
       });
 
       // Normalize space
-      html = html.replace(WHITE_SPACE_REG_EXP, " ");
+      html = html.replace(WHITE_SPACE_REG_EXP, ' ');
 
       // Reinsert original pre content
       html = html.replace(PLACEHOLDER_REG_EXP, function() {
@@ -75,7 +78,7 @@ wysihtml.assert.htmlEqual = (function() {
   var removeWhiteSpace = (function() {
     var REG_EXP = /(>)(\s*?)(<)/gm;
     return function(html) {
-      return wysihtml.lang.string(html.replace(REG_EXP, "$1$3")).trim();
+      return wysihtml.lang.string(html.replace(REG_EXP, '$1$3')).trim();
     };
   })();
 

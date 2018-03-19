@@ -36,106 +36,135 @@
     /** @scope wysihtml.Editor.prototype */
     defaults: {
       // Give the editor a name, the name will also be set as class name on the iframe and on the iframe's body
-      name:                 undef,
+      name: undef,
       // Whether the editor should look like the textarea (by adopting styles)
-      style:                true,
+      style: true,
       // Whether urls, entered by the user should automatically become clickable-links
-      autoLink:             true,
+      autoLink: true,
       // Tab key inserts tab into text as default behaviour. It can be disabled to regain keyboard navigation
-      handleTabKey:         true,
+      handleTabKey: true,
       // Object which includes parser rules to apply when html gets cleaned
       // See parser_rules/*.js for examples
-      parserRules:          { tags: { br: {}, span: {}, div: {}, p: {}, b: {}, i: {}, u: {} }, classes: {} },
+      parserRules: {
+        tags: { br: {}, span: {}, div: {}, p: {}, b: {}, i: {}, u: {} },
+        classes: {}
+      },
       // Object which includes parser when the user inserts content via copy & paste. If null parserRules will be used instead
       pasteParserRulesets: null,
       // Parser method to use when the user inserts content
-      parser:               wysihtml.dom.parse,
+      parser: wysihtml.dom.parse,
       // By default wysihtml will insert a <br> for line breaks, set this to false to use <p>
-      useLineBreaks:        true,
+      useLineBreaks: true,
       // Double enter (enter on blank line) exits block element in useLineBreaks mode.
       // It enables a way of escaping out of block elements and splitting block elements
       doubleLineBreakEscapesBlock: true,
       // Array (or single string) of stylesheet urls to be loaded in the editor's iframe
-      stylesheets:          [],
+      stylesheets: [],
       // Placeholder text to use, defaults to the placeholder attribute on the textarea element
-      placeholderText:      undef,
+      placeholderText: undef,
       // Whether the rich text editor should be rendered on touch devices (wysihtml >= 0.3.0 comes with basic support for iOS 5)
-      supportTouchDevices:  true,
+      supportTouchDevices: true,
       // Whether senseless <span> elements (empty or without attributes) should be removed/replaced with their content
-      cleanUp:              true,
+      cleanUp: true,
       // Whether to use div instead of secure iframe
       contentEditableMode: false,
       classNames: {
         // Class name which should be set on the contentEditable element in the created sandbox iframe, can be styled via the 'stylesheets' option
-        composer: "wysihtml-editor",
+        composer: 'wysihtml-editor',
         // Class name to add to the body when the wysihtml editor is supported
-        body: "wysihtml-supported",
+        body: 'wysihtml-supported',
         // classname added to editable area element (iframe/div) on creation
-        sandbox: "wysihtml-sandbox",
+        sandbox: 'wysihtml-sandbox',
         // class on editable area with placeholder
-        placeholder: "wysihtml-placeholder",
+        placeholder: 'wysihtml-placeholder',
         // Classname of container that editor should not touch and pass through
-        uneditableContainer: "wysihtml-uneditable-container"
+        uneditableContainer: 'wysihtml-uneditable-container'
       },
       // Browsers that support copied source handling will get a marking of the origin of the copied source (for determinig code cleanup rules on paste)
-      // Also copied source is based directly on selection - 
+      // Also copied source is based directly on selection -
       // (very useful for webkit based browsers where copy will otherwise contain a lot of code and styles based on whatever and not actually in selection).
       // If falsy value is passed source override is also disabled
       copyedFromMarking: '<meta name="copied-from" content="wysihtml">'
     },
-    
+
     constructor: function(editableElement, config) {
-      this.editableElement  = typeof(editableElement) === "string" ? document.getElementById(editableElement) : editableElement;
-      this.config           = wysihtml.lang.object({}).merge(this.defaults).merge(config).get();
-      this._isCompatible    = wysihtml.browser.supported();
+      this.editableElement =
+        typeof editableElement === 'string'
+          ? document.getElementById(editableElement)
+          : editableElement;
+      this.config = wysihtml.lang
+        .object({})
+        .merge(this.defaults)
+        .merge(config)
+        .get();
+      this._isCompatible = wysihtml.browser.supported();
 
       // merge classNames
       if (config && config.classNames) {
         wysihtml.lang.object(this.config.classNames).merge(config.classNames);
       }
 
-      if (this.editableElement.nodeName.toLowerCase() != "textarea") {
-          this.config.contentEditableMode = true;
-          this.config.noTextarea = true;
+      if (this.editableElement.nodeName.toLowerCase() != 'textarea') {
+        this.config.contentEditableMode = true;
+        this.config.noTextarea = true;
       }
       if (!this.config.noTextarea) {
-          this.textarea         = new wysihtml.views.Textarea(this, this.editableElement, this.config);
-          this.currentView      = this.textarea;
+        this.textarea = new wysihtml.views.Textarea(
+          this,
+          this.editableElement,
+          this.config
+        );
+        this.currentView = this.textarea;
       }
 
       // Sort out unsupported/unwanted browsers here
-      if (!this._isCompatible || (!this.config.supportTouchDevices && wysihtml.browser.isTouchDevice())) {
+      if (
+        !this._isCompatible ||
+        (!this.config.supportTouchDevices && wysihtml.browser.isTouchDevice())
+      ) {
         var that = this;
-        setTimeout(function() { that.fire("beforeload").fire("load"); }, 0);
+        setTimeout(function() {
+          that.fire('beforeload').fire('load');
+        }, 0);
         return;
       }
 
       // Add class name to body, to indicate that the editor is supported
       wysihtml.dom.addClass(document.body, this.config.classNames.body);
 
-      this.composer = new wysihtml.views.Composer(this, this.editableElement, this.config);
+      this.composer = new wysihtml.views.Composer(
+        this,
+        this.editableElement,
+        this.config
+      );
       this.currentView = this.composer;
 
-      if (typeof(this.config.parser) === "function") {
+      if (typeof this.config.parser === 'function') {
         this._initParser();
       }
 
-      this.on("beforeload", this.handleBeforeLoad);
+      this.on('beforeload', this.handleBeforeLoad);
     },
 
     handleBeforeLoad: function() {
-        if (!this.config.noTextarea) {
-          this.synchronizer = new wysihtml.views.Synchronizer(this, this.textarea, this.composer);
-        } else {
-          this.sourceView = new wysihtml.views.SourceView(this, this.composer);
-        }
-        this.runEditorExtenders();
+      if (!this.config.noTextarea) {
+        this.synchronizer = new wysihtml.views.Synchronizer(
+          this,
+          this.textarea,
+          this.composer
+        );
+      } else {
+        this.sourceView = new wysihtml.views.SourceView(this, this.composer);
+      }
+      this.runEditorExtenders();
     },
-    
+
     runEditorExtenders: function() {
-      wysihtml.editorExtenders.forEach(function(extender) {
-        extender(this);
-      }.bind(this));
+      wysihtml.editorExtenders.forEach(
+        function(extender) {
+          extender(this);
+        }.bind(this)
+      );
     },
 
     isCompatible: function() {
@@ -152,7 +181,7 @@
     },
 
     setValue: function(html, parse) {
-      this.fire("unset_placeholder");
+      this.fire('unset_placeholder');
 
       if (!html) {
         return this.clear();
@@ -163,7 +192,7 @@
     },
 
     cleanUp: function(rules) {
-        this.currentView.cleanUp(rules);
+      this.currentView.cleanUp(rules);
     },
 
     focus: function(setToEnd) {
@@ -199,20 +228,22 @@
       if (this.composer && this.composer.sandbox) {
         this.composer.sandbox.destroy();
       }
-      this.fire("destroy:composer");
+      this.fire('destroy:composer');
       this.off();
     },
 
     parse: function(htmlOrElement, clearInternals, customRules) {
-      var parseContext = (this.config.contentEditableMode) ? document : ((this.composer) ? this.composer.sandbox.getDocument() : null);
+      var parseContext = this.config.contentEditableMode
+        ? document
+        : this.composer ? this.composer.sandbox.getDocument() : null;
       var returnValue = this.config.parser(htmlOrElement, {
-        "rules": customRules || this.config.parserRules,
-        "cleanUp": this.config.cleanUp,
-        "context": parseContext,
-        "uneditableClass": this.config.classNames.uneditableContainer,
-        "clearInternals" : clearInternals
+        rules: customRules || this.config.parserRules,
+        cleanUp: this.config.cleanUp,
+        context: parseContext,
+        uneditableClass: this.config.classNames.uneditableContainer,
+        clearInternals: clearInternals
       });
-      if (typeof(htmlOrElement) === "object") {
+      if (typeof htmlOrElement === 'object') {
         wysihtml.quirks.redraw(htmlOrElement);
       }
       return returnValue;
@@ -226,35 +257,44 @@
       var oldHtml;
 
       if (wysihtml.browser.supportsModernPaste()) {
-        this.on("paste:composer", function(event) {
-          event.preventDefault();
-          oldHtml = wysihtml.dom.getPastedHtml(event);
-          if (oldHtml) {
-            this._cleanAndPaste(oldHtml);
-          }
-        }.bind(this));
-
-      } else {
-        this.on("beforepaste:composer", function(event) {
-          event.preventDefault();
-          var scrollPos = this.composer.getScrollPos();
-
-          wysihtml.dom.getPastedHtmlWithDiv(this.composer, function(pastedHTML) {
-            if (pastedHTML) {
-              this._cleanAndPaste(pastedHTML);
+        this.on(
+          'paste:composer',
+          function(event) {
+            event.preventDefault();
+            oldHtml = wysihtml.dom.getPastedHtml(event);
+            if (oldHtml) {
+              this._cleanAndPaste(oldHtml);
             }
-            this.composer.setScrollPos(scrollPos);
-          }.bind(this));
+          }.bind(this)
+        );
+      } else {
+        this.on(
+          'beforepaste:composer',
+          function(event) {
+            event.preventDefault();
+            var scrollPos = this.composer.getScrollPos();
 
-        }.bind(this));
+            wysihtml.dom.getPastedHtmlWithDiv(
+              this.composer,
+              function(pastedHTML) {
+                if (pastedHTML) {
+                  this._cleanAndPaste(pastedHTML);
+                }
+                this.composer.setScrollPos(scrollPos);
+              }.bind(this)
+            );
+          }.bind(this)
+        );
       }
     },
 
-    _cleanAndPaste: function (oldHtml) {
+    _cleanAndPaste: function(oldHtml) {
       var cleanHtml = wysihtml.quirks.cleanPastedHTML(oldHtml, {
-        "referenceNode": this.composer.element,
-        "rules": this.config.pasteParserRulesets || [{"set": this.config.parserRules}],
-        "uneditableClass": this.config.classNames.uneditableContainer
+        referenceNode: this.composer.element,
+        rules: this.config.pasteParserRulesets || [
+          { set: this.config.parserRules }
+        ],
+        uneditableClass: this.config.classNames.uneditableContainer
       });
       this.composer.selection.deleteContents();
       this.composer.selection.insertHTML(cleanHtml);

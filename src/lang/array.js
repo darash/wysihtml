@@ -11,7 +11,7 @@ wysihtml.lang.array = function(arr) {
      */
     contains: function(needle) {
       if (Array.isArray(needle)) {
-        for (var i = needle.length; i--;) {
+        for (var i = needle.length; i--; ) {
           if (wysihtml.lang.array(arr).indexOf(needle[i]) !== -1) {
             return true;
           }
@@ -31,14 +31,16 @@ wysihtml.lang.array = function(arr) {
      *    // => 1
      */
     indexOf: function(needle) {
-        if (arr.indexOf) {
-          return arr.indexOf(needle);
-        } else {
-          for (var i=0, length=arr.length; i<length; i++) {
-            if (arr[i] === needle) { return i; }
+      if (arr.indexOf) {
+        return arr.indexOf(needle);
+      } else {
+        for (var i = 0, length = arr.length; i < length; i++) {
+          if (arr[i] === needle) {
+            return i;
           }
-          return -1;
         }
+        return -1;
+      }
     },
 
     /**
@@ -50,10 +52,10 @@ wysihtml.lang.array = function(arr) {
      */
     without: function(arrayToSubstract) {
       arrayToSubstract = wysihtml.lang.array(arrayToSubstract);
-      var newArr  = [],
-          i       = 0,
-          length  = arr.length;
-      for (; i<length; i++) {
+      var newArr = [],
+        i = 0,
+        length = arr.length;
+      for (; i < length; i++) {
         if (!arrayToSubstract.contains(arr[i])) {
           newArr.push(arr[i]);
         }
@@ -69,10 +71,10 @@ wysihtml.lang.array = function(arr) {
      *    var childNodes = wysihtml.lang.array(document.body.childNodes).get();
      */
     get: function() {
-      var i        = 0,
-          length   = arr.length,
-          newArray = [];
-      for (; i<length; i++) {
+      var i = 0,
+        length = arr.length,
+        newArray = [];
+      for (; i < length; i++) {
         newArray.push(arr[i]);
       }
       return newArray;
@@ -93,10 +95,10 @@ wysihtml.lang.array = function(arr) {
         return arr.map(callback, thisArg);
       } else {
         var len = arr.length >>> 0,
-            A = new Array(len),
-            i = 0;
+          A = new Array(len),
+          i = 0;
         for (; i < len; i++) {
-           A[i] = callback.call(thisArg, arr[i], i, arr);
+          A[i] = callback.call(thisArg, arr[i], i, arr);
         }
         return A;
       }
@@ -110,8 +112,8 @@ wysihtml.lang.array = function(arr) {
      */
     unique: function() {
       var vals = [],
-          max = arr.length,
-          idx = 0;
+        max = arr.length,
+        idx = 0;
 
       while (idx < max) {
         if (!wysihtml.lang.array(vals).contains(arr[idx])) {
@@ -121,6 +123,5 @@ wysihtml.lang.array = function(arr) {
       }
       return vals;
     }
-
   };
 };

@@ -13,13 +13,17 @@
  * @param {Element} Optional, defines the container that limits the search
  *
  * @return {null|Element} Returns the first element that matched the desiredNodeName(s)
-*/
+ */
 
 wysihtml.dom.getParentElement = (function() {
-
   return function(node, properties, levels, container) {
     levels = levels || 50;
-    while (levels-- && node && node.nodeName !== "BODY" && (!container || node !== container)) {
+    while (
+      levels-- &&
+      node &&
+      node.nodeName !== 'BODY' &&
+      (!container || node !== container)
+    ) {
       if (wysihtml.dom.domNode(node).test(properties)) {
         return node;
       }
@@ -27,5 +31,4 @@ wysihtml.dom.getParentElement = (function() {
     }
     return null;
   };
-
 })();

@@ -18,7 +18,6 @@
  *
  */
 (function(dom) {
-
   /**
    * Mozilla, WebKit and Opera recalculate the computed width when box-sizing: boder-box; is set
    * So if an element has "width: 200px; -moz-box-sizing: border-box; border: 1px;" then
@@ -26,20 +25,29 @@
    *
    * See https://bugzilla.mozilla.org/show_bug.cgi?id=520992
    */
-  var BOX_SIZING_PROPERTIES = ["-webkit-box-sizing", "-moz-box-sizing", "-ms-box-sizing", "box-sizing"];
+  var BOX_SIZING_PROPERTIES = [
+    '-webkit-box-sizing',
+    '-moz-box-sizing',
+    '-ms-box-sizing',
+    'box-sizing'
+  ];
 
   var shouldIgnoreBoxSizingBorderBox = function(element) {
     if (hasBoxSizingBorderBox(element)) {
-       return parseInt(dom.getStyle("width").from(element), 10) < element.offsetWidth;
+      return (
+        parseInt(dom.getStyle('width').from(element), 10) < element.offsetWidth
+      );
     }
     return false;
   };
 
   var hasBoxSizingBorderBox = function(element) {
-    var i       = 0,
-        length  = BOX_SIZING_PROPERTIES.length;
-    for (; i<length; i++) {
-      if (dom.getStyle(BOX_SIZING_PROPERTIES[i]).from(element) === "border-box") {
+    var i = 0,
+      length = BOX_SIZING_PROPERTIES.length;
+    for (; i < length; i++) {
+      if (
+        dom.getStyle(BOX_SIZING_PROPERTIES[i]).from(element) === 'border-box'
+      ) {
         return BOX_SIZING_PROPERTIES[i];
       }
     }
@@ -49,16 +57,19 @@
     return {
       from: function(element) {
         if (shouldIgnoreBoxSizingBorderBox(element)) {
-          stylesToCopy = wysihtml.lang.array(stylesToCopy).without(BOX_SIZING_PROPERTIES);
+          stylesToCopy = wysihtml.lang
+            .array(stylesToCopy)
+            .without(BOX_SIZING_PROPERTIES);
         }
 
-        var cssText = "",
-            length  = stylesToCopy.length,
-            i       = 0,
-            property;
-        for (; i<length; i++) {
+        var cssText = '',
+          length = stylesToCopy.length,
+          i = 0,
+          property;
+        for (; i < length; i++) {
           property = stylesToCopy[i];
-          cssText += property + ":" + dom.getStyle(property).from(element) + ";";
+          cssText +=
+            property + ':' + dom.getStyle(property).from(element) + ';';
         }
 
         return {

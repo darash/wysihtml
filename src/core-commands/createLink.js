@@ -1,21 +1,28 @@
 (function(wysihtml) {
-
   var nodeOptions = {
-    nodeName: "A",
+    nodeName: 'A',
     toggle: false
   };
 
   function getOptions(value) {
-    var options = typeof value === 'object' ? value : {'href': value};
-    return wysihtml.lang.object({}).merge(nodeOptions).merge({'attribute': options}).get();
+    var options = typeof value === 'object' ? value : { href: value };
+    return wysihtml.lang
+      .object({})
+      .merge(nodeOptions)
+      .merge({ attribute: options })
+      .get();
   }
 
-  wysihtml.commands.createLink  = {
+  wysihtml.commands.createLink = {
     exec: function(composer, command, value) {
       var opts = getOptions(value);
 
       if (composer.selection.isCollapsed() && !this.state(composer, command)) {
-        var textNode = composer.doc.createTextNode(opts.attribute.href);
+        if (opts.attribute.text !== '') {
+          var textNode = composer.doc.createTextNode(opts.attribute.text);
+        } else {
+          var textNode = composer.doc.createTextNode(opts.attribute.href);
+        }
         composer.selection.insertNode(textNode);
         composer.selection.selectNode(textNode);
       }
@@ -23,8 +30,11 @@
     },
 
     state: function(composer, command) {
-      return wysihtml.commands.formatInline.state(composer, command, nodeOptions);
+      return wysihtml.commands.formatInline.state(
+        composer,
+        command,
+        nodeOptions
+      );
     }
   };
-
 })(wysihtml);

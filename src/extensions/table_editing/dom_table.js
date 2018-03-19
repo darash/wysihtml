@@ -1,24 +1,23 @@
 (function() {
-
   var api = wysihtml.dom;
 
   var MapCell = function(cell) {
     this.el = cell;
-    this.isColspan= false;
-    this.isRowspan= false;
-    this.firstCol= true;
-    this.lastCol= true;
-    this.firstRow= true;
-    this.lastRow= true;
-    this.isReal= true;
-    this.spanCollection= [];
+    this.isColspan = false;
+    this.isRowspan = false;
+    this.firstCol = true;
+    this.lastCol = true;
+    this.firstRow = true;
+    this.lastRow = true;
+    this.isReal = true;
+    this.spanCollection = [];
     this.modified = false;
   };
 
-  var TableModifyerByCell = function (cell, table) {
+  var TableModifyerByCell = function(cell, table) {
     if (cell) {
       this.cell = cell;
-      this.table = api.getParentElement(cell, { query: "table" });
+      this.table = api.getParentElement(cell, { query: 'table' });
     } else if (table) {
       this.table = table;
       this.cell = this.table.querySelectorAll('th, td')[0];
@@ -31,7 +30,7 @@
     for (var e = 0, len = list.length; e < len; e++) {
       q = list[e].querySelectorAll(query);
       if (q) {
-        for(var i = q.length; i--; ret.unshift(q[i]));
+        for (var i = q.length; i--; ret.unshift(q[i]));
       }
     }
     return ret;
@@ -47,7 +46,7 @@
 
   function nextNode(node, tag) {
     var element = node.nextSibling;
-    while (element.nodeType !=1) {
+    while (element.nodeType != 1) {
       element = element.nextSibling;
       if (!tag || tag == element.tagName.toLowerCase()) {
         return element;
@@ -57,18 +56,19 @@
   }
 
   TableModifyerByCell.prototype = {
-
     addSpannedCellToMap: function(cell, map, r, c, cspan, rspan) {
       var spanCollect = [],
-        rmax = r + ((rspan) ? parseInt(rspan, 10) - 1 : 0),
-        cmax = c + ((cspan) ? parseInt(cspan, 10) - 1 : 0);
+        rmax = r + (rspan ? parseInt(rspan, 10) - 1 : 0),
+        cmax = c + (cspan ? parseInt(cspan, 10) - 1 : 0);
 
       for (var rr = r; rr <= rmax; rr++) {
-        if (typeof map[rr] == "undefined") { map[rr] = []; }
+        if (typeof map[rr] == 'undefined') {
+          map[rr] = [];
+        }
         for (var cc = c; cc <= cmax; cc++) {
           map[rr][cc] = new MapCell(cell);
-          map[rr][cc].isColspan = (cspan && parseInt(cspan, 10) > 1);
-          map[rr][cc].isRowspan = (rspan && parseInt(rspan, 10) > 1);
+          map[rr][cc].isColspan = cspan && parseInt(cspan, 10) > 1;
+          map[rr][cc].isRowspan = rspan && parseInt(rspan, 10) > 1;
           map[rr][cc].firstCol = cc == c;
           map[rr][cc].lastCol = cc == cmax;
           map[rr][cc].firstRow = rr == r;
@@ -85,7 +85,7 @@
       cell.modified = true;
       if (cell.spanCollection.length > 0) {
         for (var s = 0, smax = cell.spanCollection.length; s < smax; s++) {
-        cell.spanCollection[s].modified = true;
+          cell.spanCollection[s].modified = true;
         }
       }
     },
@@ -93,28 +93,37 @@
     setTableMap: function() {
       var map = [];
       var tableRows = this.getTableRows(),
-        ridx, row, cells, cidx, cell,
+        ridx,
+        row,
+        cells,
+        cidx,
+        cell,
         c,
-        cspan, rspan;
+        cspan,
+        rspan;
 
       for (ridx = 0; ridx < tableRows.length; ridx++) {
         row = tableRows[ridx];
         cells = this.getRowCells(row);
         c = 0;
-        if (typeof map[ridx] == "undefined") { map[ridx] = []; }
+        if (typeof map[ridx] == 'undefined') {
+          map[ridx] = [];
+        }
         for (cidx = 0; cidx < cells.length; cidx++) {
           cell = cells[cidx];
 
           // If cell allready set means it is set by col or rowspan,
           // so increase cols index until free col is found
-          while (typeof map[ridx][c] != "undefined") { c++; }
+          while (typeof map[ridx][c] != 'undefined') {
+            c++;
+          }
 
           cspan = api.getAttribute(cell, 'colspan');
           rspan = api.getAttribute(cell, 'rowspan');
 
           if (cspan || rspan) {
             this.addSpannedCellToMap(cell, map, ridx, c, cspan, rspan);
-            c = c + ((cspan) ? parseInt(cspan, 10) : 1);
+            c = c + (cspan ? parseInt(cspan, 10) : 1);
           } else {
             map[ridx][c] = new MapCell(cell);
             c++;
@@ -127,30 +136,36 @@
 
     getRowCells: function(row) {
       var inlineTables = this.table.querySelectorAll('table'),
-        inlineCells = (inlineTables) ? queryInList(inlineTables, 'th, td') : [],
+        inlineCells = inlineTables ? queryInList(inlineTables, 'th, td') : [],
         allCells = row.querySelectorAll('th, td'),
-        tableCells = (inlineCells.length > 0) ? wysihtml.lang.array(allCells).without(inlineCells) : allCells;
+        tableCells =
+          inlineCells.length > 0
+            ? wysihtml.lang.array(allCells).without(inlineCells)
+            : allCells;
 
       return tableCells;
     },
 
     getTableRows: function() {
       var inlineTables = this.table.querySelectorAll('table'),
-        inlineRows = (inlineTables) ? queryInList(inlineTables, 'tr') : [],
+        inlineRows = inlineTables ? queryInList(inlineTables, 'tr') : [],
         allRows = this.table.querySelectorAll('tr'),
-        tableRows = (inlineRows.length > 0) ? wysihtml.lang.array(allRows).without(inlineRows) : allRows;
+        tableRows =
+          inlineRows.length > 0
+            ? wysihtml.lang.array(allRows).without(inlineRows)
+            : allRows;
 
       return tableRows;
     },
 
     getMapIndex: function(cell) {
       var r_length = this.map.length,
-        c_length = (this.map && this.map[0]) ? this.map[0].length : 0;
+        c_length = this.map && this.map[0] ? this.map[0].length : 0;
 
-      for (var r_idx = 0;r_idx < r_length; r_idx++) {
-        for (var c_idx = 0;c_idx < c_length; c_idx++) {
+      for (var r_idx = 0; r_idx < r_length; r_idx++) {
+        for (var c_idx = 0; c_idx < c_length; c_idx++) {
           if (this.map[r_idx][c_idx].el === cell) {
-            return {'row': r_idx, 'col': c_idx};
+            return { row: r_idx, col: c_idx };
           }
         }
       }
@@ -159,7 +174,11 @@
 
     getElementAtIndex: function(idx) {
       this.setTableMap();
-      if (this.map[idx.row] && this.map[idx.row][idx.col] && this.map[idx.row][idx.col].el) {
+      if (
+        this.map[idx.row] &&
+        this.map[idx.row][idx.col] &&
+        this.map[idx.row][idx.col].el
+      ) {
         return this.map[idx.row][idx.col].el;
       }
       return null;
@@ -172,7 +191,11 @@
       this.idx_end = this.getMapIndex(to_cell);
 
       // switch indexes if start is bigger than end
-      if (this.idx_start.row > this.idx_end.row || (this.idx_start.row == this.idx_end.row && this.idx_start.col > this.idx_end.col)) {
+      if (
+        this.idx_start.row > this.idx_end.row ||
+        (this.idx_start.row == this.idx_end.row &&
+          this.idx_start.col > this.idx_end.col)
+      ) {
         var temp_idx = this.idx_start;
         this.idx_start = this.idx_end;
         this.idx_end = temp_idx;
@@ -184,8 +207,16 @@
       }
 
       if (this.idx_start != null && this.idx_end != null) {
-        for (var row = this.idx_start.row, maxr = this.idx_end.row; row <= maxr; row++) {
-          for (var col = this.idx_start.col, maxc = this.idx_end.col; col <= maxc; col++) {
+        for (
+          var row = this.idx_start.row, maxr = this.idx_end.row;
+          row <= maxr;
+          row++
+        ) {
+          for (
+            var col = this.idx_start.col, maxc = this.idx_end.col;
+            col <= maxc;
+            col++
+          ) {
             els.push(this.map[row][col].el);
           }
         }
@@ -199,7 +230,11 @@
       this.idx_end = this.getMapIndex(secondcell);
 
       // switch indexes if start is bigger than end
-      if (this.idx_start.row > this.idx_end.row || (this.idx_start.row == this.idx_end.row && this.idx_start.col > this.idx_end.col)) {
+      if (
+        this.idx_start.row > this.idx_end.row ||
+        (this.idx_start.row == this.idx_end.row &&
+          this.idx_start.col > this.idx_end.col)
+      ) {
         var temp_idx = this.idx_start;
         this.idx_start = this.idx_end;
         this.idx_end = temp_idx;
@@ -211,8 +246,8 @@
       }
 
       return {
-        "start": this.map[this.idx_start.row][this.idx_start.col].el,
-        "end": this.map[this.idx_end.row][this.idx_end.col].el
+        start: this.map[this.idx_start.row][this.idx_start.col].el,
+        end: this.map[this.idx_end.row][this.idx_end.col].el
       };
     },
 
@@ -232,7 +267,7 @@
         }
 
         // add non breaking space
-        cell.appendChild(document.createTextNode("\u00a0"));
+        cell.appendChild(document.createTextNode('\u00a0'));
         frag.appendChild(cell);
       }
       return frag;
@@ -243,7 +278,7 @@
       var r = this.map[row],
         corrIdx = -1;
       for (var i = 0, max = col; i < col; i++) {
-        if (r[i].isReal){
+        if (r[i].isReal) {
           corrIdx++;
         }
       }
@@ -252,12 +287,16 @@
 
     getLastNewCellOnRow: function(row, rowLimit) {
       var cells = this.getRowCells(row),
-        cell, idx;
+        cell,
+        idx;
 
       for (var cidx = 0, cmax = cells.length; cidx < cmax; cidx++) {
         cell = cells[cidx];
         idx = this.getMapIndex(cell);
-        if (idx === false || (typeof rowLimit != "undefined" && idx.row != rowLimit)) {
+        if (
+          idx === false ||
+          (typeof rowLimit != 'undefined' && idx.row != rowLimit)
+        ) {
           return cell;
         }
       }
@@ -280,7 +319,7 @@
         var colspan = parseInt(api.getAttribute(cell.el, 'colspan') || 1, 10),
           cType = cell.el.tagName.toLowerCase();
         if (colspan > 1) {
-          var newCells = this.createCells(cType, colspan -1);
+          var newCells = this.createCells(cType, colspan - 1);
           insertAfter(cell.el, newCells);
         }
         cell.el.removeAttribute('colspan');
@@ -296,7 +335,7 @@
       for (var cidx = 0, cmax = this.map[idx.row].length; cidx < cmax; cidx++) {
         c = this.map[idx.row][cidx];
         if (c.isReal) {
-          r = api.getParentElement(c.el, { query: "tr" });
+          r = api.getParentElement(c.el, { query: 'tr' });
           if (r) {
             return r;
           }
@@ -304,14 +343,17 @@
       }
 
       if (r === null && force) {
-        r = api.getParentElement(this.map[idx.row][idx.col].el, { query: "tr" }) || null;
+        r =
+          api.getParentElement(this.map[idx.row][idx.col].el, {
+            query: 'tr'
+          }) || null;
       }
 
       return r;
     },
 
     injectRowAt: function(row, col, colspan, cType, c) {
-      var r = this.getRealRowEl(false, {'row': row, 'col': col}),
+      var r = this.getRealRowEl(false, { row: row, col: col }),
         new_cells = this.createCells(cType, colspan);
 
       if (r) {
@@ -324,7 +366,7 @@
       } else {
         var rr = this.table.ownerDocument.createElement('tr');
         rr.appendChild(new_cells);
-        insertAfter(api.getParentElement(c.el, { query: "tr" }), rr);
+        insertAfter(api.getParentElement(c.el, { query: 'tr' }), rr);
       }
     },
 
@@ -335,7 +377,11 @@
       this.idx_end = this.getMapIndex(this.to);
 
       // switch indexes if start is bigger than end
-      if (this.idx_start.row > this.idx_end.row || (this.idx_start.row == this.idx_end.row && this.idx_start.col > this.idx_end.col)) {
+      if (
+        this.idx_start.row > this.idx_end.row ||
+        (this.idx_start.row == this.idx_end.row &&
+          this.idx_start.col > this.idx_end.col)
+      ) {
         var temp_idx = this.idx_start;
         this.idx_start = this.idx_end;
         this.idx_end = temp_idx;
@@ -346,8 +392,16 @@
         this.idx_end.col = temp_cidx;
       }
 
-      for (var row = this.idx_start.row, maxr = this.idx_end.row; row <= maxr; row++) {
-        for (var col = this.idx_start.col, maxc = this.idx_end.col; col <= maxc; col++) {
+      for (
+        var row = this.idx_start.row, maxr = this.idx_end.row;
+        row <= maxr;
+        row++
+      ) {
+        for (
+          var col = this.idx_start.col, maxc = this.idx_end.col;
+          col <= maxc;
+          col++
+        ) {
           if (this.map[row][col].isColspan || this.map[row][col].isRowspan) {
             return false;
           }
@@ -383,14 +437,20 @@
       if (this.map) {
         ridx = 0;
         rmax = this.map.length;
-        for (;ridx < rmax; ridx++) {
+        for (; ridx < rmax; ridx++) {
           row = this.map[ridx];
           allRowspan = true;
           cidx = 0;
           cmax = row.length;
           for (; cidx < cmax; cidx++) {
             cell = row[cidx];
-            if (!(api.getAttribute(cell.el, "rowspan") && parseInt(api.getAttribute(cell.el, "rowspan"), 10) > 1 && cell.firstRow !== true)) {
+            if (
+              !(
+                api.getAttribute(cell.el, 'rowspan') &&
+                parseInt(api.getAttribute(cell.el, 'rowspan'), 10) > 1 &&
+                cell.firstRow !== true
+              )
+            ) {
               allRowspan = false;
               break;
             }
@@ -407,9 +467,12 @@
         var tableRows = this.getTableRows();
         ridx = 0;
         rmax = tableRows.length;
-        for (;ridx < rmax; ridx++) {
+        for (; ridx < rmax; ridx++) {
           row = tableRows[ridx];
-          if (row.childNodes.length == 0 && (/^\s*$/.test(row.textContent || row.innerText))) {
+          if (
+            row.childNodes.length == 0 &&
+            /^\s*$/.test(row.textContent || row.innerText)
+          ) {
             removeElement(row);
           }
         }
@@ -423,11 +486,12 @@
 
       this.setTableMap();
       if (this.map) {
-
         // find maximal dimensions of broken table
         r_max = this.map.length;
         for (var ridx = 0; ridx < r_max; ridx++) {
-          if (this.map[ridx].length > c_max) { c_max = this.map[ridx].length; }
+          if (this.map[ridx].length > c_max) {
+            c_max = this.map[ridx].length;
+          }
         }
 
         for (var row = 0; row < r_max; row++) {
@@ -435,9 +499,10 @@
             if (this.map[row] && !this.map[row][col]) {
               if (col > 0) {
                 this.map[row][col] = new MapCell(this.createCells('td', 1));
-                prevcell = this.map[row][col-1];
-                if (prevcell && prevcell.el && prevcell.el.parent) { // if parent does not exist element is removed from dom
-                  insertAfter(this.map[row][col-1].el, this.map[row][col].el);
+                prevcell = this.map[row][col - 1];
+                if (prevcell && prevcell.el && prevcell.el.parent) {
+                  // if parent does not exist element is removed from dom
+                  insertAfter(this.map[row][col - 1].el, this.map[row][col].el);
                 }
               }
             }
@@ -463,14 +528,25 @@
 
         if (this.idx) {
           var thisCell = this.map[this.idx.row][this.idx.col],
-            colspan = (api.getAttribute(thisCell.el, "colspan")) ? parseInt(api.getAttribute(thisCell.el, "colspan"), 10) : 1,
+            colspan = api.getAttribute(thisCell.el, 'colspan')
+              ? parseInt(api.getAttribute(thisCell.el, 'colspan'), 10)
+              : 1,
             cType = thisCell.el.tagName.toLowerCase();
 
           if (thisCell.isRowspan) {
-            var rowspan = parseInt(api.getAttribute(thisCell.el, "rowspan"), 10);
+            var rowspan = parseInt(
+              api.getAttribute(thisCell.el, 'rowspan'),
+              10
+            );
             if (rowspan > 1) {
-              for (var nr = 1, maxr = rowspan - 1; nr <= maxr; nr++){
-                this.injectRowAt(this.idx.row + nr, this.idx.col, colspan, cType, thisCell);
+              for (var nr = 1, maxr = rowspan - 1; nr <= maxr; nr++) {
+                this.injectRowAt(
+                  this.idx.row + nr,
+                  this.idx.col,
+                  colspan,
+                  cType,
+                  thisCell
+                );
               }
             }
             thisCell.el.removeAttribute('rowspan');
@@ -487,9 +563,16 @@
           var rowspan = this.idx_end.row - this.idx_start.row + 1,
             colspan = this.idx_end.col - this.idx_start.col + 1;
 
-          for (var row = this.idx_start.row, maxr = this.idx_end.row; row <= maxr; row++) {
-            for (var col = this.idx_start.col, maxc = this.idx_end.col; col <= maxc; col++) {
-
+          for (
+            var row = this.idx_start.row, maxr = this.idx_end.row;
+            row <= maxr;
+            row++
+          ) {
+            for (
+              var col = this.idx_start.col, maxc = this.idx_end.col;
+              col <= maxc;
+              col++
+            ) {
               if (row == this.idx_start.row && col == this.idx_start.col) {
                 if (rowspan > 1) {
                   this.map[row][col].el.setAttribute('rowspan', rowspan);
@@ -499,12 +582,18 @@
                 }
               } else {
                 // transfer content
-                if (!(/^\s*<br\/?>\s*$/.test(this.map[row][col].el.innerHTML.toLowerCase()))) {
-                  this.map[this.idx_start.row][this.idx_start.col].el.innerHTML += ' ' + this.map[row][col].el.innerHTML;
+                if (
+                  !/^\s*<br\/?>\s*$/.test(
+                    this.map[row][col].el.innerHTML.toLowerCase()
+                  )
+                ) {
+                  this.map[this.idx_start.row][
+                    this.idx_start.col
+                  ].el.innerHTML +=
+                    ' ' + this.map[row][col].el.innerHTML;
                 }
                 removeElement(this.map[row][col].el);
               }
-
             }
           }
           this.rectify();
@@ -521,10 +610,9 @@
     collapseCellToNextRow: function(cell) {
       var cellIdx = this.getMapIndex(cell.el),
         newRowIdx = cellIdx.row + 1,
-        newIdx = {'row': newRowIdx, 'col': cellIdx.col};
+        newIdx = { row: newRowIdx, col: cellIdx.col };
 
       if (newRowIdx < this.map.length) {
-
         var row = this.getRealRowEl(false, newIdx);
         if (row !== null) {
           var n_cidx = this.correctColIndexForUnreals(newIdx.col, newIdx.row);
@@ -539,7 +627,10 @@
             }
           }
           if (parseInt(api.getAttribute(cell.el, 'rowspan'), 10) > 2) {
-            cell.el.setAttribute('rowspan', parseInt(api.getAttribute(cell.el, 'rowspan'), 10) - 1);
+            cell.el.setAttribute(
+              'rowspan',
+              parseInt(api.getAttribute(cell.el, 'rowspan'), 10) - 1
+            );
           } else {
             cell.el.removeAttribute('rowspan');
           }
@@ -559,7 +650,10 @@
         }
       } else {
         if (parseInt(api.getAttribute(cell.el, 'rowspan'), 10) > 2) {
-          cell.el.setAttribute('rowspan', parseInt(api.getAttribute(cell.el, 'rowspan'), 10) - 1);
+          cell.el.setAttribute(
+            'rowspan',
+            parseInt(api.getAttribute(cell.el, 'rowspan'), 10) - 1
+          );
         } else {
           cell.el.removeAttribute('rowspan');
         }
@@ -587,7 +681,10 @@
       this.idx = this.getMapIndex(this.cell);
       if (this.idx !== false) {
         for (var ridx = 0, rmax = this.map.length; ridx < rmax; ridx++) {
-          if (this.map[ridx][this.idx.col] && this.map[ridx][this.idx.col].isReal) {
+          if (
+            this.map[ridx][this.idx.col] &&
+            this.map[ridx][this.idx.col].isReal
+          ) {
             cells.push(this.map[ridx][this.idx.col].el);
           }
         }
@@ -597,7 +694,7 @@
 
     // Removes the row of selected cell
     removeRow: function() {
-      var oldRow = api.getParentElement(this.cell, { query: "tr" });
+      var oldRow = api.getParentElement(this.cell, { query: 'tr' });
       if (oldRow) {
         this.setTableMap();
         this.idx = this.getMapIndex(this.cell);
@@ -617,7 +714,10 @@
     removeColCell: function(cell) {
       if (cell.isColspan) {
         if (parseInt(api.getAttribute(cell.el, 'colspan'), 10) > 2) {
-          cell.el.setAttribute('colspan', parseInt(api.getAttribute(cell.el, 'colspan'), 10) - 1);
+          cell.el.setAttribute(
+            'colspan',
+            parseInt(api.getAttribute(cell.el, 'colspan'), 10) - 1
+          );
         } else {
           cell.el.removeAttribute('colspan');
         }
@@ -645,10 +745,10 @@
         switch (what) {
           case 'row':
             this.removeRow();
-          break;
+            break;
           case 'column':
             this.removeColumn();
-          break;
+            break;
         }
         this.rectify();
       }
@@ -659,8 +759,11 @@
 
       this.setTableMap();
       this.idx = this.getMapIndex(this.cell);
-      if (where == "below" && api.getAttribute(this.cell, 'rowspan')) {
-        this.idx.row = this.idx.row + parseInt(api.getAttribute(this.cell, 'rowspan'), 10) - 1;
+      if (where == 'below' && api.getAttribute(this.cell, 'rowspan')) {
+        this.idx.row =
+          this.idx.row +
+          parseInt(api.getAttribute(this.cell, 'rowspan'), 10) -
+          1;
       }
 
       if (this.idx !== false) {
@@ -677,22 +780,30 @@
         switch (where) {
           case 'below':
             insertAfter(this.getRealRowEl(true), newRow);
-          break;
+            break;
           case 'above':
-            var cr = api.getParentElement(this.map[this.idx.row][this.idx.col].el, { query: "tr" });
+            var cr = api.getParentElement(
+              this.map[this.idx.row][this.idx.col].el,
+              { query: 'tr' }
+            );
             if (cr) {
               cr.parentNode.insertBefore(newRow, cr);
             }
-          break;
+            break;
         }
       }
     },
 
     addRowCell: function(cell, row, where) {
-      var colSpanAttr = (cell.isColspan) ? {"colspan" : api.getAttribute(cell.el, 'colspan')} : null;
+      var colSpanAttr = cell.isColspan
+        ? { colspan: api.getAttribute(cell.el, 'colspan') }
+        : null;
       if (cell.isReal) {
         if (where != 'above' && cell.isRowspan) {
-          cell.el.setAttribute('rowspan', parseInt(api.getAttribute(cell.el,'rowspan'), 10) + 1);
+          cell.el.setAttribute(
+            'rowspan',
+            parseInt(api.getAttribute(cell.el, 'rowspan'), 10) + 1
+          );
         } else {
           row.appendChild(this.createCells('td', 1, colSpanAttr));
         }
@@ -700,7 +811,10 @@
         if (where != 'above' && cell.isRowspan && cell.lastRow) {
           row.appendChild(this.createCells('td', 1, colSpanAttr));
         } else if (c.isRowspan) {
-          cell.el.attr('rowspan', parseInt(api.getAttribute(cell.el, 'rowspan'), 10) + 1);
+          cell.el.attr(
+            'rowspan',
+            parseInt(api.getAttribute(cell.el, 'rowspan'), 10) + 1
+          );
         }
       }
     },
@@ -716,40 +830,48 @@
       }
     },
 
-    addColCell: function (cell, ridx, where) {
+    addColCell: function(cell, ridx, where) {
       var doAdd,
         cType = cell.el.tagName.toLowerCase();
 
       // defines add cell vs expand cell conditions
       // true means add
       switch (where) {
-        case "before":
-          doAdd = (!cell.isColspan || cell.firstCol);
-        break;
-        case "after":
-          doAdd = (!cell.isColspan || cell.lastCol || (cell.isColspan && cell.el == this.cell));
-        break;
+        case 'before':
+          doAdd = !cell.isColspan || cell.firstCol;
+          break;
+        case 'after':
+          doAdd =
+            !cell.isColspan ||
+            cell.lastCol ||
+            (cell.isColspan && cell.el == this.cell);
+          break;
       }
 
-      if (doAdd){
+      if (doAdd) {
         // adds a cell before or after current cell element
         switch (where) {
-          case "before":
-            cell.el.parentNode.insertBefore(this.createCells(cType, 1), cell.el);
-          break;
-          case "after":
+          case 'before':
+            cell.el.parentNode.insertBefore(
+              this.createCells(cType, 1),
+              cell.el
+            );
+            break;
+          case 'after':
             insertAfter(cell.el, this.createCells(cType, 1));
-          break;
+            break;
         }
 
         // handles if cell has rowspan
         if (cell.isRowspan) {
-          this.handleCellAddWithRowspan(cell, ridx+1, where);
+          this.handleCellAddWithRowspan(cell, ridx + 1, where);
         }
-
       } else {
         // expands cell
-        cell.el.setAttribute('colspan',  parseInt(api.getAttribute(cell.el, 'colspan'), 10) + 1);
+        cell.el.setAttribute(
+          'colspan',
+          parseInt(api.getAttribute(cell.el, 'colspan'), 10) + 1
+        );
       }
     },
 
@@ -758,50 +880,64 @@
 
       this.setTableMap();
       this.idx = this.getMapIndex(this.cell);
-      if (where == "after" && api.getAttribute(this.cell, 'colspan')) {
-        this.idx.col = this.idx.col + parseInt(api.getAttribute(this.cell, 'colspan'), 10) - 1;
+      if (where == 'after' && api.getAttribute(this.cell, 'colspan')) {
+        this.idx.col =
+          this.idx.col +
+          parseInt(api.getAttribute(this.cell, 'colspan'), 10) -
+          1;
       }
 
       if (this.idx !== false) {
-        for (var ridx = 0, rmax = this.map.length; ridx < rmax; ridx++ ) {
+        for (var ridx = 0, rmax = this.map.length; ridx < rmax; ridx++) {
           row = this.map[ridx];
           if (row[this.idx.col]) {
             modCell = row[this.idx.col];
             if (!modCell.modified) {
               this.setCellAsModified(modCell);
-              this.addColCell(modCell, ridx , where);
+              this.addColCell(modCell, ridx, where);
             }
           }
         }
       }
     },
 
-    handleCellAddWithRowspan: function (cell, ridx, where) {
+    handleCellAddWithRowspan: function(cell, ridx, where) {
       var addRowsNr = parseInt(api.getAttribute(this.cell, 'rowspan'), 10) - 1,
-        crow = api.getParentElement(cell.el, { query: "tr" }),
+        crow = api.getParentElement(cell.el, { query: 'tr' }),
         cType = cell.el.tagName.toLowerCase(),
-        cidx, temp_r_cells,
+        cidx,
+        temp_r_cells,
         doc = this.table.ownerDocument,
         nrow;
 
       for (var i = 0; i < addRowsNr; i++) {
-        cidx = this.correctColIndexForUnreals(this.idx.col, (ridx + i));
+        cidx = this.correctColIndexForUnreals(this.idx.col, ridx + i);
         crow = nextNode(crow, 'tr');
         if (crow) {
           if (cidx > 0) {
             switch (where) {
-              case "before":
+              case 'before':
                 temp_r_cells = this.getRowCells(crow);
-                if (cidx > 0 && this.map[ridx + i][this.idx.col].el != temp_r_cells[cidx] && cidx == temp_r_cells.length - 1) {
-                   insertAfter(temp_r_cells[cidx], this.createCells(cType, 1));
+                if (
+                  cidx > 0 &&
+                  this.map[ridx + i][this.idx.col].el != temp_r_cells[cidx] &&
+                  cidx == temp_r_cells.length - 1
+                ) {
+                  insertAfter(temp_r_cells[cidx], this.createCells(cType, 1));
                 } else {
-                  temp_r_cells[cidx].parentNode.insertBefore(this.createCells(cType, 1), temp_r_cells[cidx]);
+                  temp_r_cells[cidx].parentNode.insertBefore(
+                    this.createCells(cType, 1),
+                    temp_r_cells[cidx]
+                  );
                 }
 
-              break;
-              case "after":
-                insertAfter(this.getRowCells(crow)[cidx], this.createCells(cType, 1));
-              break;
+                break;
+              case 'after':
+                insertAfter(
+                  this.getRowCells(crow)[cidx],
+                  this.createCells(cType, 1)
+                );
+                break;
             }
           } else {
             crow.insertBefore(this.createCells(cType, 1), crow.firstChild);
@@ -872,5 +1008,4 @@
       return c.canMerge(cell2);
     }
   };
-
 })();

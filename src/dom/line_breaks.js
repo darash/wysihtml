@@ -1,9 +1,8 @@
 // TODO: Refactor dom tree traversing here
 (function(wysihtml) {
   wysihtml.dom.lineBreaks = function(node) {
-
     function _isLineBreak(n) {
-      return n.nodeName === "BR";
+      return n.nodeName === 'BR';
     }
 
     /**
@@ -15,7 +14,7 @@
         return true;
       }
 
-      if (wysihtml.dom.getStyle("display").from(element) === "block") {
+      if (wysihtml.dom.getStyle('display').from(element) === 'block') {
         return true;
       }
 
@@ -23,22 +22,25 @@
     }
 
     return {
-
       /* wysihtml.dom.lineBreaks(element).add();
        *
        * Adds line breaks before and after the given node if the previous and next siblings
        * aren't already causing a visual line break (block element or <br>)
        */
       add: function(options) {
-        var doc             = node.ownerDocument,
-          nextSibling     = wysihtml.dom.domNode(node).next({ignoreBlankTexts: true}),
-          previousSibling = wysihtml.dom.domNode(node).prev({ignoreBlankTexts: true});
+        var doc = node.ownerDocument,
+          nextSibling = wysihtml.dom
+            .domNode(node)
+            .next({ ignoreBlankTexts: true }),
+          previousSibling = wysihtml.dom
+            .domNode(node)
+            .prev({ ignoreBlankTexts: true });
 
         if (nextSibling && !_isLineBreakOrBlockElement(nextSibling)) {
-          wysihtml.dom.insert(doc.createElement("br")).after(node);
+          wysihtml.dom.insert(doc.createElement('br')).after(node);
         }
         if (previousSibling && !_isLineBreakOrBlockElement(previousSibling)) {
-          wysihtml.dom.insert(doc.createElement("br")).before(node);
+          wysihtml.dom.insert(doc.createElement('br')).before(node);
         }
       },
 
@@ -47,8 +49,12 @@
        * Removes line breaks before and after the given node
        */
       remove: function(options) {
-        var nextSibling     = wysihtml.dom.domNode(node).next({ignoreBlankTexts: true}),
-            previousSibling = wysihtml.dom.domNode(node).prev({ignoreBlankTexts: true});
+        var nextSibling = wysihtml.dom
+            .domNode(node)
+            .next({ ignoreBlankTexts: true }),
+          previousSibling = wysihtml.dom
+            .domNode(node)
+            .prev({ ignoreBlankTexts: true });
 
         if (nextSibling && _isLineBreak(nextSibling)) {
           nextSibling.parentNode.removeChild(nextSibling);

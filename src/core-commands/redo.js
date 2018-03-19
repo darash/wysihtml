@@ -1,4 +1,4 @@
-(function(wysihtml){
+(function(wysihtml) {
   wysihtml.commands.redo = {
     exec: function(composer) {
       return composer.undoManager.redo();
@@ -8,4 +8,4 @@
       return false;
     }
   };
-}(wysihtml));
+})(wysihtml);

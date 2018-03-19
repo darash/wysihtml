@@ -1,14 +1,14 @@
 (function() {
   var WHITE_SPACE_START = /^\s+/,
-      WHITE_SPACE_END   = /\s+$/,
-      ENTITY_REG_EXP    = /[&<>\t"]/g,
-      ENTITY_MAP = {
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': "&quot;",
-        '\t':"&nbsp; "
-      };
+    WHITE_SPACE_END = /\s+$/,
+    ENTITY_REG_EXP = /[&<>\t"]/g,
+    ENTITY_MAP = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      '\t': '&nbsp; '
+    };
   wysihtml.lang.string = function(str) {
     str = String(str);
     return {
@@ -18,7 +18,7 @@
        *    // => "foo"
        */
       trim: function() {
-        return str.replace(WHITE_SPACE_START, "").replace(WHITE_SPACE_END, "");
+        return str.replace(WHITE_SPACE_START, '').replace(WHITE_SPACE_END, '');
       },
 
       /**
@@ -28,7 +28,7 @@
        */
       interpolate: function(vars) {
         for (var i in vars) {
-          str = this.replace("#{" + i + "}").by(vars[i]);
+          str = this.replace('#{' + i + '}').by(vars[i]);
         }
         return str;
       },
@@ -52,12 +52,14 @@
        *    // => "hello&lt;br&gt;"
        */
       escapeHTML: function(linebreaks, convertSpaces) {
-        var html = str.replace(ENTITY_REG_EXP, function(c) { return ENTITY_MAP[c]; });
+        var html = str.replace(ENTITY_REG_EXP, function(c) {
+          return ENTITY_MAP[c];
+        });
         if (linebreaks) {
           html = html.replace(/(?:\r\n|\r|\n)/g, '<br />');
         }
         if (convertSpaces) {
-          html = html.replace(/  /gi, "&nbsp; ");
+          html = html.replace(/  /gi, '&nbsp; ');
         }
         return html;
       }

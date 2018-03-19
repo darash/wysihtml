@@ -9,7 +9,7 @@
     if (api.hasClass(element, className)) {
       return;
     }
-    element.className += " " + className;
+    element.className += ' ' + className;
   };
 
   api.removeClass = function(element, className) {
@@ -18,7 +18,10 @@
       return classList.remove(className);
     }
 
-    element.className = element.className.replace(new RegExp("(^|\\s+)" + className + "(\\s+|$)"), " ");
+    element.className = element.className.replace(
+      new RegExp('(^|\\s+)' + className + '(\\s+|$)'),
+      ' '
+    );
   };
 
   api.hasClass = function(element, className) {
@@ -28,6 +31,10 @@
     }
 
     var elementClassName = element.className;
-    return (elementClassName.length > 0 && (elementClassName == className || new RegExp("(^|\\s)" + className + "(\\s|$)").test(elementClassName)));
+    return (
+      elementClassName.length > 0 &&
+      (elementClassName == className ||
+        new RegExp('(^|\\s)' + className + '(\\s|$)').test(elementClassName))
+    );
   };
 })(wysihtml);

@@ -15,53 +15,53 @@
   var dom = wysihtml.dom;
 
   var linkStyles = {
-    position: "relative"
+    position: 'relative'
   };
 
   var wrapperStyles = {
-    left:     0,
-    margin:   0,
-    opacity:  0,
-    overflow: "hidden",
-    padding:  0,
-    position: "absolute",
-    top:      0,
-    zIndex:   1
+    left: 0,
+    margin: 0,
+    opacity: 0,
+    overflow: 'hidden',
+    padding: 0,
+    position: 'absolute',
+    top: 0,
+    zIndex: 1
   };
 
   var inputStyles = {
-    cursor:     "inherit",
-    fontSize:   "50px",
-    height:     "50px",
-    marginTop:  "-25px",
-    outline:    0,
-    padding:    0,
-    position:   "absolute",
-    right:      "-4px",
-    top:        "50%"
+    cursor: 'inherit',
+    fontSize: '50px',
+    height: '50px',
+    marginTop: '-25px',
+    outline: 0,
+    padding: 0,
+    position: 'absolute',
+    right: '-4px',
+    top: '50%'
   };
 
   var inputAttributes = {
-    "x-webkit-speech": "",
-    "speech":          ""
+    'x-webkit-speech': '',
+    speech: ''
   };
 
   wysihtml.toolbar.Speech = function(parent, link) {
-    var input = document.createElement("input");
+    var input = document.createElement('input');
     if (!wysihtml.browser.supportsSpeechApiOn(input)) {
-      link.style.display = "none";
+      link.style.display = 'none';
       return;
     }
-    var lang = parent.editor.textarea.element.getAttribute("lang");
+    var lang = parent.editor.textarea.element.getAttribute('lang');
     if (lang) {
       inputAttributes.lang = lang;
     }
 
-    var wrapper = document.createElement("div");
+    var wrapper = document.createElement('div');
 
     wysihtml.lang.object(wrapperStyles).merge({
-      width:  link.offsetWidth  + "px",
-      height: link.offsetHeight + "px"
+      width: link.offsetWidth + 'px',
+      height: link.offsetHeight + 'px'
     });
 
     dom.insert(input).into(wrapper);
@@ -73,14 +73,15 @@
     dom.setStyles(wrapperStyles).on(wrapper);
     dom.setStyles(linkStyles).on(link);
 
-    var eventName = "onwebkitspeechchange" in input ? "webkitspeechchange" : "speechchange";
+    var eventName =
+      'onwebkitspeechchange' in input ? 'webkitspeechchange' : 'speechchange';
     dom.observe(input, eventName, function() {
-      parent.execCommand("insertText", input.value);
-      input.value = "";
+      parent.execCommand('insertText', input.value);
+      input.value = '';
     });
 
-    dom.observe(input, "click", function(event) {
-      if (dom.hasClass(link, "wysihtml-command-disabled")) {
+    dom.observe(input, 'click', function(event) {
+      if (dom.hasClass(link, 'wysihtml-command-disabled')) {
         event.preventDefault();
       }
 

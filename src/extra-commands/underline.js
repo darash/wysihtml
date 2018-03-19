@@ -1,6 +1,6 @@
 wysihtml.commands.underline = (function() {
   var nodeOptions = {
-    nodeName: "U",
+    nodeName: 'U',
     toggle: true
   };
 
@@ -10,8 +10,11 @@ wysihtml.commands.underline = (function() {
     },
 
     state: function(composer, command) {
-      return wysihtml.commands.formatInline.state(composer, command, nodeOptions);
+      return wysihtml.commands.formatInline.state(
+        composer,
+        command,
+        nodeOptions
+      );
     }
   };
-
 })();

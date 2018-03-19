@@ -1,6 +1,6 @@
 wysihtml.commands.subscript = (function() {
   var nodeOptions = {
-    nodeName: "SUB",
+    nodeName: 'SUB',
     toggle: true
   };
 
@@ -10,8 +10,11 @@ wysihtml.commands.subscript = (function() {
     },
 
     state: function(composer, command) {
-      return wysihtml.commands.formatInline.state(composer, command, nodeOptions);
+      return wysihtml.commands.formatInline.state(
+        composer,
+        command,
+        nodeOptions
+      );
     }
   };
-
 })();

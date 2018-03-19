@@ -1,6 +1,6 @@
 (function() {
   var mapping = {
-    "className": "class"
+    className: 'class'
   };
   wysihtml.dom.setAttributes = function(attributes) {
     return {

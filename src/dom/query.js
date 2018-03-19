@@ -10,7 +10,7 @@ wysihtml.dom.query = function(elements, query) {
     for (var e = 0, len = elements.length; e < len; e++) {
         q = elements[e].querySelectorAll(query);
         if (q) {
-            for(var i = q.length; i--; ret.unshift(q[i]));
+            for (var i = q.length; i--; ret.unshift(q[i]));
         }
     }
     return ret;

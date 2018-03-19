@@ -1,8 +1,8 @@
-wysihtml.dom.getTextNodes = function(node, ingoreEmpty){
+wysihtml.dom.getTextNodes = function(node, ingoreEmpty) {
   var all = [];
-  for (node=node.firstChild;node;node=node.nextSibling){
+  for (node = node.firstChild; node; node = node.nextSibling) {
     if (node.nodeType == 3) {
-      if (!ingoreEmpty || !(/^\s*$/).test(node.innerText || node.textContent)) {
+      if (!ingoreEmpty || !/^\s*$/.test(node.innerText || node.textContent)) {
         all.push(node);
       }
     } else {

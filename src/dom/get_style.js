@@ -10,9 +10,12 @@
  */
 wysihtml.dom.getStyle = (function() {
   var stylePropertyMapping = {
-        "float": ("styleFloat" in document.createElement("div").style) ? "styleFloat" : "cssFloat"
-      },
-      REG_EXP_CAMELIZE = /\-[a-z]/g;
+      float:
+        'styleFloat' in document.createElement('div').style
+          ? 'styleFloat'
+          : 'cssFloat'
+    },
+    REG_EXP_CAMELIZE = /\-[a-z]/g;
 
   function camelize(str) {
     return str.replace(REG_EXP_CAMELIZE, function(match) {
@@ -27,11 +30,12 @@ wysihtml.dom.getStyle = (function() {
           return;
         }
 
-        var doc               = element.ownerDocument,
-            camelizedProperty = stylePropertyMapping[property] || camelize(property),
-            style             = element.style,
-            currentStyle      = element.currentStyle,
-            styleValue        = style[camelizedProperty];
+        var doc = element.ownerDocument,
+          camelizedProperty =
+            stylePropertyMapping[property] || camelize(property),
+          style = element.style,
+          currentStyle = element.currentStyle,
+          styleValue = style[camelizedProperty];
         if (styleValue) {
           return styleValue;
         }
@@ -44,26 +48,30 @@ wysihtml.dom.getStyle = (function() {
         if (currentStyle) {
           try {
             return currentStyle[camelizedProperty];
-          } catch(e) {
+          } catch (e) {
             //ie will occasionally fail for unknown reasons. swallowing exception
           }
         }
 
-        var win                 = doc.defaultView || doc.parentWindow,
-            needsOverflowReset  = (property === "height" || property === "width") && element.nodeName === "TEXTAREA",
-            originalOverflow,
-            returnValue;
+        var win = doc.defaultView || doc.parentWindow,
+          needsOverflowReset =
+            (property === 'height' || property === 'width') &&
+            element.nodeName === 'TEXTAREA',
+          originalOverflow,
+          returnValue;
 
         if (win.getComputedStyle) {
           // Chrome and Safari both calculate a wrong width and height for textareas when they have scroll bars
           // therfore we remove and restore the scrollbar and calculate the value in between
           if (needsOverflowReset) {
             originalOverflow = style.overflow;
-            style.overflow = "hidden";
+            style.overflow = 'hidden';
           }
-          returnValue = win.getComputedStyle(element, null).getPropertyValue(property);
+          returnValue = win
+            .getComputedStyle(element, null)
+            .getPropertyValue(property);
           if (needsOverflowReset) {
-            style.overflow = originalOverflow || "";
+            style.overflow = originalOverflow || '';
           }
           return returnValue;
         }

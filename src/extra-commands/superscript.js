@@ -1,6 +1,6 @@
 wysihtml.commands.superscript = (function() {
   var nodeOptions = {
-    nodeName: "SUP",
+    nodeName: 'SUP',
     toggle: true
   };
 
@@ -10,8 +10,11 @@ wysihtml.commands.superscript = (function() {
     },
 
     state: function(composer, command) {
-      return wysihtml.commands.formatInline.state(composer, command, nodeOptions);
+      return wysihtml.commands.formatInline.state(
+        composer,
+        command,
+        nodeOptions
+      );
     }
   };
-
 })();

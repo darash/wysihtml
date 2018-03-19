@@ -1,6 +1,6 @@
-wysihtml.commands.italic = (function() { 
+wysihtml.commands.italic = (function() {
   var nodeOptions = {
-    nodeName: "I",
+    nodeName: 'I',
     toggle: true
   };
 
@@ -10,8 +10,11 @@ wysihtml.commands.italic = (function() {
     },
 
     state: function(composer, command) {
-      return wysihtml.commands.formatInline.state(composer, command, nodeOptions);
+      return wysihtml.commands.formatInline.state(
+        composer,
+        command,
+        nodeOptions
+      );
     }
   };
-
 })();

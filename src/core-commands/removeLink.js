@@ -1,7 +1,6 @@
 (function(wysihtml) {
-
   var nodeOptions = {
-    nodeName: "A"
+    nodeName: 'A'
   };
 
   wysihtml.commands.removeLink = {
@@ -10,8 +9,11 @@
     },
 
     state: function(composer, command) {
-      return wysihtml.commands.formatInline.state(composer, command, nodeOptions);
+      return wysihtml.commands.formatInline.state(
+        composer,
+        command,
+        nodeOptions
+      );
     }
   };
-
 })(wysihtml);

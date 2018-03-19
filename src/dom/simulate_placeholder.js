@@ -13,39 +13,47 @@
  *    wysihtml.dom.simulatePlaceholder(this, composer, "Foobar");
  */
 (function(dom) {
-  dom.simulatePlaceholder = function(editor, view, placeholderText, placeholderClassName) {
-    var CLASS_NAME = placeholderClassName || "wysihtml-placeholder",
-        unset = function() {
-          var composerIsVisible   = view.element.offsetWidth > 0 && view.element.offsetHeight > 0;
-          if (view.hasPlaceholderSet()) {
-            view.clear();
-            view.element.focus();
-            if (composerIsVisible ) {
-              setTimeout(function() {
-                var sel = view.selection.getSelection();
-                if (!sel.focusNode || !sel.anchorNode) {
-                  view.selection.selectNode(view.element.firstChild || view.element);
-                }
-              }, 0);
-            }
+  dom.simulatePlaceholder = function(
+    editor,
+    view,
+    placeholderText,
+    placeholderClassName
+  ) {
+    var CLASS_NAME = placeholderClassName || 'wysihtml-placeholder',
+      unset = function() {
+        var composerIsVisible =
+          view.element.offsetWidth > 0 && view.element.offsetHeight > 0;
+        if (view.hasPlaceholderSet()) {
+          view.clear();
+          view.element.focus();
+          if (composerIsVisible) {
+            setTimeout(function() {
+              var sel = view.selection.getSelection();
+              if (!sel.focusNode || !sel.anchorNode) {
+                view.selection.selectNode(
+                  view.element.firstChild || view.element
+                );
+              }
+            }, 0);
           }
-          view.placeholderSet = false;
-          dom.removeClass(view.element, CLASS_NAME);
-        },
-        set = function() {
-          if (view.isEmpty() && !view.placeholderSet) {
-            view.placeholderSet = true;
-            view.setValue(placeholderText, false);
-            dom.addClass(view.element, CLASS_NAME);
-          }
-        };
+        }
+        view.placeholderSet = false;
+        dom.removeClass(view.element, CLASS_NAME);
+      },
+      set = function() {
+        if (view.isEmpty() && !view.placeholderSet) {
+          view.placeholderSet = true;
+          view.setValue(placeholderText, false);
+          dom.addClass(view.element, CLASS_NAME);
+        }
+      };
 
     editor
-      .on("set_placeholder", set)
-      .on("unset_placeholder", unset)
-      .on("focus:composer", unset)
-      .on("paste:composer", unset)
-      .on("blur:composer", set);
+      .on('set_placeholder', set)
+      .on('unset_placeholder', unset)
+      .on('focus:composer', unset)
+      .on('paste:composer', unset)
+      .on('blur:composer', set);
 
     set();
   };

@@ -8,7 +8,7 @@
 //      <a href="%7E"></a>
 // which is wrong
 (function(wysihtml) {
-  var TILDE_ESCAPED = "%7E";
+  var TILDE_ESCAPED = '%7E';
   wysihtml.quirks.getCorrectInnerHTML = function(element) {
     var innerHTML = element.innerHTML;
     if (innerHTML.indexOf(TILDE_ESCAPED) === -1) {
@@ -16,14 +16,20 @@
     }
 
     var elementsWithTilde = element.querySelectorAll("[href*='~'], [src*='~']"),
-        url,
-        urlToSearch,
-        length,
-        i;
-    for (i=0, length=elementsWithTilde.length; i<length; i++) {
-      url         = elementsWithTilde[i].href || elementsWithTilde[i].src;
-      urlToSearch = wysihtml.lang.string(url).replace("~").by(TILDE_ESCAPED);
-      innerHTML   = wysihtml.lang.string(innerHTML).replace(urlToSearch).by(url);
+      url,
+      urlToSearch,
+      length,
+      i;
+    for (i = 0, length = elementsWithTilde.length; i < length; i++) {
+      url = elementsWithTilde[i].href || elementsWithTilde[i].src;
+      urlToSearch = wysihtml.lang
+        .string(url)
+        .replace('~')
+        .by(TILDE_ESCAPED);
+      innerHTML = wysihtml.lang
+        .string(innerHTML)
+        .replace(urlToSearch)
+        .by(url);
     }
     return innerHTML;
   };

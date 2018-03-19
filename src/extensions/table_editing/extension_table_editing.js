@@ -1,5 +1,4 @@
 (function() {
-
   // Keep the old composer.observe function.
   var oldObserverFunction = wysihtml.views.Composer.prototype.observe;
 
@@ -17,14 +16,18 @@
   // should be called with false to prevent native table handlers.
   var initTableHandling = function() {
     var hideHandlers = function() {
-          this.win.removeEventListener('load', hideHandlers);
-          this.doc.execCommand('enableObjectResizing', false, 'false');
-          this.doc.execCommand('enableInlineTableEditing', false, 'false');
-        }.bind(this),
-        iframeInitiator = (function() {
-          hideHandlers.call(this);
-          this.actions.removeListeners(this.sandbox.getIframe(), ['focus', 'mouseup', 'mouseover'], iframeInitiator);
-        }).bind(this);
+        this.win.removeEventListener('load', hideHandlers);
+        this.doc.execCommand('enableObjectResizing', false, 'false');
+        this.doc.execCommand('enableInlineTableEditing', false, 'false');
+      }.bind(this),
+      iframeInitiator = function() {
+        hideHandlers.call(this);
+        this.actions.removeListeners(
+          this.sandbox.getIframe(),
+          ['focus', 'mouseup', 'mouseover'],
+          iframeInitiator
+        );
+      }.bind(this);
 
     if (
       this.doc.execCommand &&
@@ -32,24 +35,35 @@
       wysihtml.browser.supportsCommand(this.doc, 'enableInlineTableEditing')
     ) {
       if (this.sandbox.getIframe) {
-        this.actions.addListeners(this.sandbox.getIframe(), ['focus', 'mouseup', 'mouseover'], iframeInitiator);
+        this.actions.addListeners(
+          this.sandbox.getIframe(),
+          ['focus', 'mouseup', 'mouseover'],
+          iframeInitiator
+        );
       } else {
         this.win.addEventListener('load', hideHandlers);
       }
     }
-    this.tableSelection = wysihtml.quirks.tableCellsSelection(this.element, this.parent);
+    this.tableSelection = wysihtml.quirks.tableCellsSelection(
+      this.element,
+      this.parent
+    );
   };
 
   // Cell selections handling
   var tableCellsSelection = function(editable, editor) {
-
     var init = function() {
       editable.addEventListener('mousedown', handleMouseDown);
       return select;
     };
 
     var handleMouseDown = function(event) {
-      var target = wysihtml.dom.getParentElement(event.target, {query: 'td, th'}, false, editable);
+      var target = wysihtml.dom.getParentElement(
+        event.target,
+        { query: 'td, th' },
+        false,
+        editable
+      );
       if (target) {
         handleSelectionMousedown(target);
       }
@@ -59,7 +73,12 @@
       select.start = target;
       select.end = target;
       select.cells = [target];
-      select.table = dom.getParentElement(select.start, {query: 'table'}, false, editable);
+      select.table = dom.getParentElement(
+        select.start,
+        { query: 'table' },
+        false,
+        editable
+      );
 
       if (select.table) {
         removeCellSelections();
@@ -90,11 +109,21 @@
 
     var handleMouseMove = function(event) {
       var curTable = null,
-        cell = dom.getParentElement(event.target, {query: 'td, th'}, false, editable),
+        cell = dom.getParentElement(
+          event.target,
+          { query: 'td, th' },
+          false,
+          editable
+        ),
         oldEnd;
 
       if (cell && select.table && select.start) {
-        curTable =  dom.getParentElement(cell, {query: 'table'}, false, editable);
+        curTable = dom.getParentElement(
+          cell,
+          { query: 'table' },
+          false,
+          editable
+        );
         if (curTable && curTable === select.table) {
           removeCellSelections();
           oldEnd = select.end;
@@ -122,7 +151,14 @@
 
     var sideClickHandler = function(event) {
       editable.ownerDocument.removeEventListener('click', sideClickHandler);
-      if (dom.getParentElement(event.target, {query: 'table'}, false, editable) != select.table) {
+      if (
+        dom.getParentElement(
+          event.target,
+          { query: 'table' },
+          false,
+          editable
+        ) != select.table
+      ) {
         removeCellSelections();
         select.table = null;
         select.start = null;
@@ -138,7 +174,12 @@
     var selectCells = function(start, end) {
       select.start = start;
       select.end = end;
-      select.table = dom.getParentElement(select.start, {query: 'table'}, false, editable);
+      select.table = dom.getParentElement(
+        select.start,
+        { query: 'table' },
+        false,
+        editable
+      );
       selectedCells = dom.table.getCellsBetween(select.start, select.end);
       addSelections(selectedCells);
       bindSideclick();
@@ -146,14 +187,14 @@
     };
 
     var dom = wysihtml.dom,
-        select = {
-          table: null,
-          start: null,
-          end: null,
-          cells: null,
-          select: selectCells
-        },
-        selectionClass = 'wysiwyg-tmp-selected-cell';
+      select = {
+        table: null,
+        start: null,
+        end: null,
+        cells: null,
+        select: selectCells
+      },
+      selectionClass = 'wysiwyg-tmp-selected-cell';
 
     return init();
   };
@@ -162,5 +203,4 @@
   wysihtml.Editor.prototype.defaults.handleTables = true;
   wysihtml.quirks.tableCellsSelection = tableCellsSelection;
   wysihtml.views.Composer.prototype.observe = extendedObserverFunction;
-
 })();

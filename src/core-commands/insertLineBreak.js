@@ -1,5 +1,6 @@
 (function(wysihtml) {
-  var LINE_BREAK = "<br>" + (wysihtml.browser.needsSpaceAfterLineBreak() ? " " : "");
+  var LINE_BREAK =
+    '<br>' + (wysihtml.browser.needsSpaceAfterLineBreak() ? ' ' : '');
 
   wysihtml.commands.insertLineBreak = {
     exec: function(composer, command) {

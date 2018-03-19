@@ -9,15 +9,15 @@
  *    wysihtml.commands.insertImage.exec(composer, "insertImage", { src: "http://www.google.de/logo.jpg", title: "foo" });
  */
 wysihtml.commands.insertImage = (function() {
-  var NODE_NAME = "IMG";
+  var NODE_NAME = 'IMG';
   return {
     exec: function(composer, command, value) {
-      value = typeof(value) === "object" ? value : { src: value };
+      value = typeof value === 'object' ? value : { src: value };
 
-      var doc     = composer.doc,
-          image   = this.state(composer),
-          textNode,
-          parent;
+      var doc = composer.doc,
+        image = this.state(composer),
+        textNode,
+        parent;
 
       // If image is selected and src ie empty, set the caret before it and delete the image
       if (image && !value.src) {
@@ -27,7 +27,7 @@ wysihtml.commands.insertImage = (function() {
 
         // and it's parent <a> too if it hasn't got any other relevant child nodes
         wysihtml.dom.removeEmptyTextNodes(parent);
-        if (parent.nodeName === "A" && !parent.firstChild) {
+        if (parent.nodeName === 'A' && !parent.firstChild) {
           composer.selection.setAfter(parent);
           parent.parentNode.removeChild(parent);
         }
@@ -41,7 +41,7 @@ wysihtml.commands.insertImage = (function() {
       if (image) {
         for (var key in value) {
           if (value.hasOwnProperty(key)) {
-            image.setAttribute(key === "className" ? "class" : key, value[key]);
+            image.setAttribute(key === 'className' ? 'class' : key, value[key]);
           }
         }
         return;
@@ -51,7 +51,7 @@ wysihtml.commands.insertImage = (function() {
       image = doc.createElement(NODE_NAME);
 
       for (var i in value) {
-        image.setAttribute(i === "className" ? "class" : i, value[i]);
+        image.setAttribute(i === 'className' ? 'class' : i, value[i]);
       }
 
       composer.selection.insertNode(image);
@@ -66,9 +66,9 @@ wysihtml.commands.insertImage = (function() {
 
     state: function(composer) {
       var doc = composer.doc,
-          selectedNode,
-          text,
-          imagesInSelection;
+        selectedNode,
+        text,
+        imagesInSelection;
 
       if (!wysihtml.dom.hasElementWithTagName(doc, NODE_NAME)) {
         return false;
@@ -94,9 +94,12 @@ wysihtml.commands.insertImage = (function() {
         return false;
       }
 
-      imagesInSelection = composer.selection.getNodes(wysihtml.ELEMENT_NODE, function(node) {
-        return node.nodeName === "IMG";
-      });
+      imagesInSelection = composer.selection.getNodes(
+        wysihtml.ELEMENT_NODE,
+        function(node) {
+          return node.nodeName === 'IMG';
+        }
+      );
 
       if (imagesInSelection.length !== 1) {
         return false;

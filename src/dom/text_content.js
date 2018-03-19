@@ -1,6 +1,6 @@
 (function(dom) {
   var documentElement = document.documentElement;
-  if ("textContent" in documentElement) {
+  if ('textContent' in documentElement) {
     dom.setTextContent = function(element, text) {
       element.textContent = text;
     };
@@ -8,7 +8,7 @@
     dom.getTextContent = function(element) {
       return element.textContent;
     };
-  } else if ("innerText" in documentElement) {
+  } else if ('innerText' in documentElement) {
     dom.setTextContent = function(element, text) {
       element.innerText = text;
     };

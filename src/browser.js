@@ -2,17 +2,21 @@
  * Detect browser support for specific features
  */
 wysihtml.browser = (function() {
-  var userAgent   = navigator.userAgent,
-      testElement = document.createElement("div"),
-      // Browser sniffing is unfortunately needed since some behaviors are impossible to feature detect
-      // We need to be extra careful about Microsoft as it shows increasing tendency of tainting its userAgent strings with false feathers
-      isGecko     = userAgent.indexOf("Gecko")        !== -1 && userAgent.indexOf("KHTML") === -1 && !isIE(),
-      isWebKit    = userAgent.indexOf("AppleWebKit/") !== -1 && !isIE(),
-      isChrome    = userAgent.indexOf("Chrome/")      !== -1 && !isIE(),
-      isOpera     = userAgent.indexOf("Opera/")       !== -1 && !isIE();
+  var userAgent = navigator.userAgent,
+    testElement = document.createElement('div'),
+    // Browser sniffing is unfortunately needed since some behaviors are impossible to feature detect
+    // We need to be extra careful about Microsoft as it shows increasing tendency of tainting its userAgent strings with false feathers
+    isGecko =
+      userAgent.indexOf('Gecko') !== -1 &&
+      userAgent.indexOf('KHTML') === -1 &&
+      !isIE(),
+    isWebKit = userAgent.indexOf('AppleWebKit/') !== -1 && !isIE(),
+    isChrome = userAgent.indexOf('Chrome/') !== -1 && !isIE(),
+    isOpera = userAgent.indexOf('Opera/') !== -1 && !isIE();
 
   function iosVersion(userAgent) {
-    return +((/ipad|iphone|ipod/.test(userAgent) && userAgent.match(/ os (\d+).+? like mac os x/)) || [undefined, 0])[1];
+    return +((/ipad|iphone|ipod/.test(userAgent) &&
+      userAgent.match(/ os (\d+).+? like mac os x/)) || [undefined, 0])[1];
   }
 
   function androidVersion(userAgent) {
@@ -21,14 +25,14 @@ wysihtml.browser = (function() {
 
   function isIE(version, equation) {
     var rv = -1,
-        re;
+      re;
 
     if (navigator.appName == 'Microsoft Internet Explorer') {
-      re = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
+      re = new RegExp('MSIE ([0-9]{1,}[.0-9]{0,})');
     } else if (navigator.appName == 'Netscape') {
-      if (navigator.userAgent.indexOf("Trident") > -1) {
-        re = new RegExp("Trident/.*rv:([0-9]{1,}[\.0-9]{0,})");
-      } else if ((/Edge\/(\d+)./i).test(navigator.userAgent)) {
+      if (navigator.userAgent.indexOf('Trident') > -1) {
+        re = new RegExp('Trident/.*rv:([0-9]{1,}[.0-9]{0,})');
+      } else if (/Edge\/(\d+)./i.test(navigator.userAgent)) {
         re = /Edge\/(\d+)./i;
       }
     }
@@ -37,13 +41,27 @@ wysihtml.browser = (function() {
       rv = parseFloat(RegExp.$1);
     }
 
-    if (rv === -1) { return false; }
-    if (!version) { return true; }
-    if (!equation) { return version === rv; }
-    if (equation === "<") { return version < rv; }
-    if (equation === ">") { return version > rv; }
-    if (equation === "<=") { return version <= rv; }
-    if (equation === ">=") { return version >= rv; }
+    if (rv === -1) {
+      return false;
+    }
+    if (!version) {
+      return true;
+    }
+    if (!equation) {
+      return version === rv;
+    }
+    if (equation === '<') {
+      return version < rv;
+    }
+    if (equation === '>') {
+      return version > rv;
+    }
+    if (equation === '<=') {
+      return version <= rv;
+    }
+    if (equation === '>=') {
+      return version >= rv;
+    }
   }
 
   return {
@@ -59,31 +77,41 @@ wysihtml.browser = (function() {
      * @return {Boolean}
      */
     supported: function() {
-      var userAgent                   = this.USER_AGENT.toLowerCase(),
-          // Essential for making html elements editable
-          hasContentEditableSupport   = "contentEditable" in testElement,
-          // Following methods are needed in order to interact with the contentEditable area
-          hasEditingApiSupport        = document.execCommand && document.queryCommandSupported && document.queryCommandState,
-          // document selector apis are only supported by IE 8+, Safari 4+, Chrome and Firefox 3.5+
-          hasQuerySelectorSupport     = document.querySelector && document.querySelectorAll,
-          // contentEditable is unusable in mobile browsers (tested iOS 4.2.2, Android 2.2, Opera Mobile, WebOS 3.05)
-          isIncompatibleMobileBrowser = (this.isIos() && iosVersion(userAgent) < 5) || (this.isAndroid() && androidVersion(userAgent) < 4) || userAgent.indexOf("opera mobi") !== -1 || userAgent.indexOf("hpwos/") !== -1;
-      return hasContentEditableSupport
-        && hasEditingApiSupport
-        && hasQuerySelectorSupport
-        && !isIncompatibleMobileBrowser;
+      var userAgent = this.USER_AGENT.toLowerCase(),
+        // Essential for making html elements editable
+        hasContentEditableSupport = 'contentEditable' in testElement,
+        // Following methods are needed in order to interact with the contentEditable area
+        hasEditingApiSupport =
+          document.execCommand &&
+          document.queryCommandSupported &&
+          document.queryCommandState,
+        // document selector apis are only supported by IE 8+, Safari 4+, Chrome and Firefox 3.5+
+        hasQuerySelectorSupport =
+          document.querySelector && document.querySelectorAll,
+        // contentEditable is unusable in mobile browsers (tested iOS 4.2.2, Android 2.2, Opera Mobile, WebOS 3.05)
+        isIncompatibleMobileBrowser =
+          (this.isIos() && iosVersion(userAgent) < 5) ||
+          (this.isAndroid() && androidVersion(userAgent) < 4) ||
+          userAgent.indexOf('opera mobi') !== -1 ||
+          userAgent.indexOf('hpwos/') !== -1;
+      return (
+        hasContentEditableSupport &&
+        hasEditingApiSupport &&
+        hasQuerySelectorSupport &&
+        !isIncompatibleMobileBrowser
+      );
     },
 
     isTouchDevice: function() {
-      return this.supportsEvent("touchmove");
+      return this.supportsEvent('touchmove');
     },
 
     isIos: function() {
-      return (/ipad|iphone|ipod/i).test(this.USER_AGENT);
+      return /ipad|iphone|ipod/i.test(this.USER_AGENT);
     },
 
     isAndroid: function() {
-      return this.USER_AGENT.indexOf("Android") !== -1;
+      return this.USER_AGENT.indexOf('Android') !== -1;
     },
 
     /**
@@ -105,7 +133,7 @@ wysihtml.browser = (function() {
      * window.querySelector is implemented as of IE8
      */
     throwsMixedContentWarningWhenIframeSrcIsEmpty: function() {
-      return !("querySelector" in document);
+      return !('querySelector' in document);
     },
 
     /**
@@ -113,7 +141,7 @@ wysihtml.browser = (function() {
      * Firefox sometimes shows a huge caret in the beginning after focusing
      */
     displaysCaretInEmptyContentEditableCorrectly: function() {
-      return isIE(12, ">");
+      return isIE(12, '>');
     },
 
     /**
@@ -122,7 +150,7 @@ wysihtml.browser = (function() {
      * All other browsers provide the computed style in px via window.getComputedStyle
      */
     hasCurrentStyleProperty: function() {
-      return "currentStyle" in testElement;
+      return 'currentStyle' in testElement;
     },
 
     /**
@@ -133,14 +161,17 @@ wysihtml.browser = (function() {
     },
 
     supportsPlaceholderAttributeOn: function(element) {
-      return "placeholder" in element;
+      return 'placeholder' in element;
     },
 
     supportsEvent: function(eventName) {
-      return "on" + eventName in testElement || (function() {
-        testElement.setAttribute("on" + eventName, "return;");
-        return typeof(testElement["on" + eventName]) === "function";
-      })();
+      return (
+        'on' + eventName in testElement ||
+        (function() {
+          testElement.setAttribute('on' + eventName, 'return;');
+          return typeof testElement['on' + eventName] === 'function';
+        })()
+      );
     },
 
     /**
@@ -159,8 +190,8 @@ wysihtml.browser = (function() {
      *    wysihtml.browser.supportsHTML5Tags(document);
      */
     supportsHTML5Tags: function(context) {
-      var element = context.createElement("div"),
-          html5   = "<article>foo</article>";
+      var element = context.createElement('div'),
+        html5 = '<article>foo</article>';
       element.innerHTML = html5;
       return element.innerHTML.toLowerCase() === html5;
     },
@@ -182,17 +213,17 @@ wysihtml.browser = (function() {
       // TODO: investigate if some of these bugs can be tested without altering selection on page, instead of targeting browsers and versions directly
       var buggyCommands = {
         // formatBlock fails with some tags (eg. <blockquote>)
-        "formatBlock":          isIE(10, "<="),
-         // When inserting unordered or ordered lists in Firefox, Chrome or Safari, the current selection or line gets
-         // converted into a list (<ul><li>...</li></ul>, <ol><li>...</li></ol>)
-         // IE and Opera act a bit different here as they convert the entire content of the current block element into a list
-        "insertUnorderedList":  isIE(),
-        "insertOrderedList":    isIE()
+        formatBlock: isIE(10, '<='),
+        // When inserting unordered or ordered lists in Firefox, Chrome or Safari, the current selection or line gets
+        // converted into a list (<ul><li>...</li></ul>, <ol><li>...</li></ol>)
+        // IE and Opera act a bit different here as they convert the entire content of the current block element into a list
+        insertUnorderedList: isIE(),
+        insertOrderedList: isIE()
       };
 
       // Firefox throws errors for queryCommandSupported, so we have to build up our own object of supported commands
       var supported = {
-        "insertHTML": isGecko
+        insertHTML: isGecko
       };
 
       return function(doc, command) {
@@ -201,11 +232,11 @@ wysihtml.browser = (function() {
           // Firefox throws errors when invoking queryCommandSupported or queryCommandEnabled
           try {
             return doc.queryCommandSupported(command);
-          } catch(e1) {}
+          } catch (e1) {}
 
           try {
             return doc.queryCommandEnabled(command);
-          } catch(e2) {
+          } catch (e2) {
             return !!supported[command];
           }
         }
@@ -232,7 +263,7 @@ wysihtml.browser = (function() {
      * Since IE9 it's possible to prevent this behavior
      */
     canDisableAutoLinking: function() {
-      return this.supportsCommand(document, "AutoUrlDetect");
+      return this.supportsCommand(document, 'AutoUrlDetect');
     },
 
     /**
@@ -247,8 +278,8 @@ wysihtml.browser = (function() {
      * IE gives wrong results for getAttribute
      */
     supportsGetAttributeCorrectly: function() {
-      var td = document.createElement("td");
-      return td.getAttribute("rowspan") != "1";
+      var td = document.createElement('td');
+      return td.getAttribute('rowspan') != '1';
     },
 
     /**
@@ -271,15 +302,19 @@ wysihtml.browser = (function() {
      */
     autoClosesUnclosedTags: function() {
       var clonedTestElement = testElement.cloneNode(false),
-          returnValue,
-          innerHTML;
+        returnValue,
+        innerHTML;
 
-      clonedTestElement.innerHTML = "<p><div></div>";
-      innerHTML                   = clonedTestElement.innerHTML.toLowerCase();
-      returnValue                 = innerHTML === "<p></p><div></div>" || innerHTML === "<p><div></div></p>";
+      clonedTestElement.innerHTML = '<p><div></div>';
+      innerHTML = clonedTestElement.innerHTML.toLowerCase();
+      returnValue =
+        innerHTML === '<p></p><div></div>' ||
+        innerHTML === '<p><div></div></p>';
 
       // Cache result by overwriting current function
-      this.autoClosesUnclosedTags = function() { return returnValue; };
+      this.autoClosesUnclosedTags = function() {
+        return returnValue;
+      };
 
       return returnValue;
     },
@@ -288,7 +323,9 @@ wysihtml.browser = (function() {
      * Whether the browser supports the native document.getElementsByClassName which returns live NodeLists
      */
     supportsNativeGetElementsByClassName: function() {
-      return String(document.getElementsByClassName).indexOf("[native code]") !== -1;
+      return (
+        String(document.getElementsByClassName).indexOf('[native code]') !== -1
+      );
     },
 
     /**
@@ -296,7 +333,7 @@ wysihtml.browser = (function() {
      * See https://developer.mozilla.org/en/DOM/Selection/modify
      */
     supportsSelectionModify: function() {
-      return "getSelection" in window && "modify" in window.getSelection();
+      return 'getSelection' in window && 'modify' in window.getSelection();
     },
 
     /**
@@ -318,7 +355,10 @@ wysihtml.browser = (function() {
      */
     supportsSpeechApiOn: function(input) {
       var chromeVersion = userAgent.match(/Chrome\/(\d+)/) || [undefined, 0];
-      return chromeVersion[1] >= 11 && ("onwebkitspeechchange" in input || "speech" in input);
+      return (
+        chromeVersion[1] >= 11 &&
+        ('onwebkitspeechchange' in input || 'speech' in input)
+      );
     },
 
     /**
@@ -327,14 +367,17 @@ wysihtml.browser = (function() {
      * or try the POC http://tifftiff.de/ie9_crash/
      */
     crashesWhenDefineProperty: function(property) {
-      return isIE(9) && (property === "XMLHttpRequest" || property === "XDomainRequest");
+      return (
+        isIE(9) &&
+        (property === 'XMLHttpRequest' || property === 'XDomainRequest')
+      );
     },
 
     /**
      * IE is the only browser who fires the "focus" event not immediately when .focus() is called on an element
      */
     doesAsyncFocus: function() {
-      return isIE(12, ">");
+      return isIE(12, '>');
     },
 
     /**
@@ -389,7 +432,7 @@ wysihtml.browser = (function() {
     },
 
     supportsMutationEvents: function() {
-      return ("MutationEvent" in window);
+      return 'MutationEvent' in window;
     },
 
     /**
@@ -397,21 +440,23 @@ wysihtml.browser = (function() {
       It is on window but cannot return text/html
       Should actually check for clipboardData on paste event, but cannot in firefox
     */
-    supportsModernPaste: function () {
+    supportsModernPaste: function() {
       return !isIE();
     },
 
     // Unifies the property names of element.style by returning the suitable property name for current browser
     // Input property key must be the standard
     fixStyleKey: function(key) {
-      if (key === "cssFloat") {
-        return ("styleFloat" in document.createElement("div").style) ? "styleFloat" : "cssFloat";
+      if (key === 'cssFloat') {
+        return 'styleFloat' in document.createElement('div').style
+          ? 'styleFloat'
+          : 'cssFloat';
       }
       return key;
     },
 
     usesControlRanges: function() {
-      return document.body && "createControlRange" in document.body;
+      return document.body && 'createControlRange' in document.body;
     },
 
     // Webkit browsers have an issue that when caret is at the end of link it is moved outside of link while inserting new characters,

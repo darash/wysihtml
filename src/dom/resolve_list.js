@@ -22,15 +22,15 @@
  */
 (function(dom) {
   function _isBlockElement(node) {
-    return dom.getStyle("display").from(node) === "block";
+    return dom.getStyle('display').from(node) === 'block';
   }
 
   function _isLineBreak(node) {
-    return node.nodeName === "BR";
+    return node.nodeName === 'BR';
   }
 
   function _appendLineBreak(element) {
-    var lineBreak = element.ownerDocument.createElement("br");
+    var lineBreak = element.ownerDocument.createElement('br');
     element.appendChild(lineBreak);
   }
 
@@ -39,32 +39,42 @@
       return;
     }
 
-    var doc             = list.ownerDocument,
-        fragment        = doc.createDocumentFragment(),
-        previousSibling = wysihtml.dom.domNode(list).prev({ignoreBlankTexts: true}),
-        nextSibling = wysihtml.dom.domNode(list).next({ignoreBlankTexts: true}),
-        firstChild,
-        lastChild,
-        isLastChild,
-        shouldAppendLineBreak,
-        paragraph,
-        listItem,
-        lastListItem = list.lastElementChild || list.lastChild,
-        isLastItem;
+    var doc = list.ownerDocument,
+      fragment = doc.createDocumentFragment(),
+      previousSibling = wysihtml.dom
+        .domNode(list)
+        .prev({ ignoreBlankTexts: true }),
+      nextSibling = wysihtml.dom.domNode(list).next({ ignoreBlankTexts: true }),
+      firstChild,
+      lastChild,
+      isLastChild,
+      shouldAppendLineBreak,
+      paragraph,
+      listItem,
+      lastListItem = list.lastElementChild || list.lastChild,
+      isLastItem;
 
     if (useLineBreaks) {
       // Insert line break if list is after a non-block element
-      if (previousSibling && !_isBlockElement(previousSibling) && !_isLineBreak(previousSibling)) {
+      if (
+        previousSibling &&
+        !_isBlockElement(previousSibling) &&
+        !_isLineBreak(previousSibling)
+      ) {
         _appendLineBreak(fragment);
       }
 
-      while (listItem = (list.firstElementChild || list.firstChild)) {
+      while ((listItem = list.firstElementChild || list.firstChild)) {
         lastChild = listItem.lastChild;
         isLastItem = listItem === lastListItem;
-        while (firstChild = listItem.firstChild) {
-          isLastChild           = firstChild === lastChild;
+        while ((firstChild = listItem.firstChild)) {
+          isLastChild = firstChild === lastChild;
           // This needs to be done before appending it to the fragment, as it otherwise will lose style information
-          shouldAppendLineBreak = (!isLastItem || (nextSibling && !_isBlockElement(nextSibling))) && isLastChild && !_isBlockElement(firstChild) && !_isLineBreak(firstChild);
+          shouldAppendLineBreak =
+            (!isLastItem || (nextSibling && !_isBlockElement(nextSibling))) &&
+            isLastChild &&
+            !_isBlockElement(firstChild) &&
+            !_isLineBreak(firstChild);
           fragment.appendChild(firstChild);
           if (shouldAppendLineBreak) {
             _appendLineBreak(fragment);
@@ -74,14 +84,19 @@
         listItem.parentNode.removeChild(listItem);
       }
     } else {
-      while (listItem = (list.firstElementChild || list.firstChild)) {
-        if (listItem.querySelector && listItem.querySelector("div, p, ul, ol, menu, blockquote, h1, h2, h3, h4, h5, h6")) {
-          while (firstChild = listItem.firstChild) {
+      while ((listItem = list.firstElementChild || list.firstChild)) {
+        if (
+          listItem.querySelector &&
+          listItem.querySelector(
+            'div, p, ul, ol, menu, blockquote, h1, h2, h3, h4, h5, h6'
+          )
+        ) {
+          while ((firstChild = listItem.firstChild)) {
             fragment.appendChild(firstChild);
           }
         } else {
-          paragraph = doc.createElement("p");
-          while (firstChild = listItem.firstChild) {
+          paragraph = doc.createElement('p');
+          while ((firstChild = listItem.firstChild)) {
             paragraph.appendChild(firstChild);
           }
           fragment.appendChild(paragraph);

@@ -26,7 +26,7 @@
  */
 wysihtml.dom.convertToList = (function() {
   function _createListItem(doc, list) {
-    var listItem = doc.createElement("li");
+    var listItem = doc.createElement('li');
     list.appendChild(listItem);
     return listItem;
   }
@@ -36,30 +36,38 @@ wysihtml.dom.convertToList = (function() {
   }
 
   function convertToList(element, listType, uneditableClass) {
-    if (element.nodeName === "UL" || element.nodeName === "OL" || element.nodeName === "MENU") {
+    if (
+      element.nodeName === 'UL' ||
+      element.nodeName === 'OL' ||
+      element.nodeName === 'MENU'
+    ) {
       // Already a list
       return element;
     }
 
-    var doc               = element.ownerDocument,
-        list              = _createList(doc, listType),
-        lineBreaks        = element.querySelectorAll("br"),
-        lineBreaksLength  = lineBreaks.length,
-        childNodes,
-        childNodesLength,
-        childNode,
-        lineBreak,
-        parentNode,
-        isBlockElement,
-        isLineBreak,
-        currentListItem,
-        i;
+    var doc = element.ownerDocument,
+      list = _createList(doc, listType),
+      lineBreaks = element.querySelectorAll('br'),
+      lineBreaksLength = lineBreaks.length,
+      childNodes,
+      childNodesLength,
+      childNode,
+      lineBreak,
+      parentNode,
+      isBlockElement,
+      isLineBreak,
+      currentListItem,
+      i;
 
     // First find <br> at the end of inline elements and move them behind them
-    for (i=0; i<lineBreaksLength; i++) {
+    for (i = 0; i < lineBreaksLength; i++) {
       lineBreak = lineBreaks[i];
-      while ((parentNode = lineBreak.parentNode) && parentNode !== element && parentNode.lastChild === lineBreak) {
-        if (wysihtml.dom.getStyle("display").from(parentNode) === "block") {
+      while (
+        (parentNode = lineBreak.parentNode) &&
+        parentNode !== element &&
+        parentNode.lastChild === lineBreak
+      ) {
+        if (wysihtml.dom.getStyle('display').from(parentNode) === 'block') {
           parentNode.removeChild(lineBreak);
           break;
         }
@@ -67,19 +75,25 @@ wysihtml.dom.convertToList = (function() {
       }
     }
 
-    childNodes        = wysihtml.lang.array(element.childNodes).get();
-    childNodesLength  = childNodes.length;
+    childNodes = wysihtml.lang.array(element.childNodes).get();
+    childNodesLength = childNodes.length;
 
-    for (i=0; i<childNodesLength; i++) {
-      currentListItem   = currentListItem || _createListItem(doc, list);
-      childNode         = childNodes[i];
-      isBlockElement    = wysihtml.dom.getStyle("display").from(childNode) === "block";
-      isLineBreak       = childNode.nodeName === "BR";
+    for (i = 0; i < childNodesLength; i++) {
+      currentListItem = currentListItem || _createListItem(doc, list);
+      childNode = childNodes[i];
+      isBlockElement =
+        wysihtml.dom.getStyle('display').from(childNode) === 'block';
+      isLineBreak = childNode.nodeName === 'BR';
 
       // consider uneditable as an inline element
-      if (isBlockElement && (!uneditableClass || !wysihtml.dom.hasClass(childNode, uneditableClass))) {
+      if (
+        isBlockElement &&
+        (!uneditableClass || !wysihtml.dom.hasClass(childNode, uneditableClass))
+      ) {
         // Append blockElement to current <li> if empty, otherwise create a new one
-        currentListItem = currentListItem.firstChild ? _createListItem(doc, list) : currentListItem;
+        currentListItem = currentListItem.firstChild
+          ? _createListItem(doc, list)
+          : currentListItem;
         currentListItem.appendChild(childNode);
         currentListItem = null;
         continue;

@@ -19,11 +19,14 @@ wysihtml.dom.copyAttributes = function(attributesToCopy) {
       return {
         to: function pasteElementAttributesTo(elementToCopyTo) {
           var attribute,
-              i         = 0,
-              length    = attributesToCopy.length;
-          for (; i<length; i++) {
+            i = 0,
+            length = attributesToCopy.length;
+          for (; i < length; i++) {
             attribute = attributesToCopy[i];
-            if (typeof(elementToCopyFrom[attribute]) !== "undefined" && elementToCopyFrom[attribute] !== "") {
+            if (
+              typeof elementToCopyFrom[attribute] !== 'undefined' &&
+              elementToCopyFrom[attribute] !== ''
+            ) {
               elementToCopyTo[attribute] = elementToCopyFrom[attribute];
             }
           }

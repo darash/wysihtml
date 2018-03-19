@@ -5,26 +5,30 @@
  * @author Christopher Blum
  */
 wysihtml.quirks.cleanPastedHTML = (function() {
-
-  var styleToRegex = function (styleStr) {
+  var styleToRegex = function(styleStr) {
     var trimmedStr = wysihtml.lang.string(styleStr).trim(),
-        escapedStr = trimmedStr.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+      escapedStr = trimmedStr.replace(
+        /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g,
+        '\\$&'
+      );
 
-    return new RegExp("^((?!^" + escapedStr + "$).)*$", "i");
+    return new RegExp('^((?!^' + escapedStr + '$).)*$', 'i');
   };
 
-  var extendRulesWithStyleExceptions = function (rules, exceptStyles) {
+  var extendRulesWithStyleExceptions = function(rules, exceptStyles) {
     var newRules = wysihtml.lang.object(rules).clone(true),
-        tag, style;
+      tag,
+      style;
 
     for (tag in newRules.tags) {
-
       if (newRules.tags.hasOwnProperty(tag)) {
         if (newRules.tags[tag].keep_styles) {
           for (style in newRules.tags[tag].keep_styles) {
             if (newRules.tags[tag].keep_styles.hasOwnProperty(style)) {
               if (exceptStyles[style]) {
-                newRules.tags[tag].keep_styles[style] = styleToRegex(exceptStyles[style]);
+                newRules.tags[tag].keep_styles[style] = styleToRegex(
+                  exceptStyles[style]
+                );
               }
             }
           }
@@ -56,22 +60,24 @@ wysihtml.quirks.cleanPastedHTML = (function() {
 
   return function(html, options) {
     var exceptStyles = {
-          'color': wysihtml.dom.getStyle("color").from(options.referenceNode),
-          'fontSize': wysihtml.dom.getStyle("font-size").from(options.referenceNode)
-        },
-        rules = extendRulesWithStyleExceptions(pickRuleset(options.rules, html) || {}, exceptStyles),
-        newHtml;
+        color: wysihtml.dom.getStyle('color').from(options.referenceNode),
+        fontSize: wysihtml.dom.getStyle('font-size').from(options.referenceNode)
+      },
+      rules = extendRulesWithStyleExceptions(
+        pickRuleset(options.rules, html) || {},
+        exceptStyles
+      ),
+      newHtml;
 
     newHtml = wysihtml.dom.parse(html, {
-      "rules": rules,
-      "cleanUp": true, // <span> elements, empty or without attributes, should be removed/replaced with their content
-      "context": options.referenceNode.ownerDocument,
-      "uneditableClass": options.uneditableClass,
-      "clearInternals" : true, // don't paste temprorary selection and other markings
-      "unjoinNbsps" : true
+      rules: rules,
+      cleanUp: true, // <span> elements, empty or without attributes, should be removed/replaced with their content
+      context: options.referenceNode.ownerDocument,
+      uneditableClass: options.uneditableClass,
+      clearInternals: true, // don't paste temprorary selection and other markings
+      unjoinNbsps: true
     });
 
     return newHtml;
   };
-
 })();

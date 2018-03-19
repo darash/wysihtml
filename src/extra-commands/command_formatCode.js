@@ -9,12 +9,14 @@ wysihtml.commands.formatCode = (function() {
   return {
     exec: function(composer, command, classname) {
       var pre = this.state(composer)[0],
-          code, range, selectedNodes;
+        code,
+        range,
+        selectedNodes;
 
       if (pre) {
         // caret is already within a <pre><code>...</code></pre>
         composer.selection.executeAndRestore(function() {
-          code = pre.querySelector("code");
+          code = pre.querySelector('code');
           wysihtml.dom.replaceWithChildNodes(pre);
           if (code) {
             wysihtml.dom.replaceWithChildNodes(code);
@@ -24,8 +26,8 @@ wysihtml.commands.formatCode = (function() {
         // Wrap in <pre><code>...</code></pre>
         range = composer.selection.getRange();
         selectedNodes = range.extractContents();
-        pre = composer.doc.createElement("pre");
-        code = composer.doc.createElement("code");
+        pre = composer.doc.createElement('pre');
+        code = composer.doc.createElement('code');
 
         if (classname) {
           code.className = classname;
@@ -39,12 +41,21 @@ wysihtml.commands.formatCode = (function() {
     },
 
     state: function(composer) {
-      var selectedNode = composer.selection.getSelectedNode(), node;
-      if (selectedNode && selectedNode.nodeName && selectedNode.nodeName == "PRE"&&
-          selectedNode.firstChild && selectedNode.firstChild.nodeName && selectedNode.firstChild.nodeName == "CODE") {
+      var selectedNode = composer.selection.getSelectedNode(),
+        node;
+      if (
+        selectedNode &&
+        selectedNode.nodeName &&
+        selectedNode.nodeName == 'PRE' &&
+        selectedNode.firstChild &&
+        selectedNode.firstChild.nodeName &&
+        selectedNode.firstChild.nodeName == 'CODE'
+      ) {
         return [selectedNode];
       } else {
-        node = wysihtml.dom.getParentElement(selectedNode, { query: "pre code" });
+        node = wysihtml.dom.getParentElement(selectedNode, {
+          query: 'pre code'
+        });
         return node ? [node.parentNode] : false;
       }
     }
