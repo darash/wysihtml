@@ -8911,6 +8911,22 @@ wysihtml.dom.hasElementWithTagName = (function() {
   };
 })();
 
+wysihtml.dom.insert = function(elementToInsert) {
+  return {
+    after: function(element) {
+      element.parentNode.insertBefore(elementToInsert, element.nextSibling);
+    },
+
+    before: function(element) {
+      element.parentNode.insertBefore(elementToInsert, element);
+    },
+
+    into: function(element) {
+      element.appendChild(elementToInsert);
+    }
+  };
+};
+
 wysihtml.dom.insertCSS = function(rules) {
   rules = rules.join('\n');
 
@@ -8935,22 +8951,6 @@ wysihtml.dom.insertCSS = function(rules) {
           head.appendChild(styleElement);
         }
       }
-    }
-  };
-};
-
-wysihtml.dom.insert = function(elementToInsert) {
-  return {
-    after: function(element) {
-      element.parentNode.insertBefore(elementToInsert, element.nextSibling);
-    },
-
-    before: function(element) {
-      element.parentNode.insertBefore(elementToInsert, element);
-    },
-
-    into: function(element) {
-      element.appendChild(elementToInsert);
     }
   };
 };
